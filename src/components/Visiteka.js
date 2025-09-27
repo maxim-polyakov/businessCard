@@ -15,7 +15,7 @@ const Visiteka = observer(() => {
         projects: [
             {
                 title: 'Misa AI Chat',
-                description: 'Веб-приложение для учета личных финансов и анализа расходов',
+                description: 'Веб-приложение для онлайн чата с моделями LLM chatgpt и далее и многим другим.',
                 technologies: ['React', 'Node.js', 'PostgreSQL', 'Chart.js'],
                 url: 'https://misa.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/Misa_bot'
