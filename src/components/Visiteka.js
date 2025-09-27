@@ -30,6 +30,7 @@ const Visiteka = observer(() => {
         ],
         socialLinks: [
             { name: 'GitHub', url: 'https://github.com/maxim-polyakov', icon: 'fab fa-github' },
+            { name: 'Telegram', url: 'https://t.me/The_Baxic', icon: 'fab fa-telegram' }
         ]
     };
 
