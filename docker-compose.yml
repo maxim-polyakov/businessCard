@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: visiteka-react-app
+    ports:
+      - "3015:3000"
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    networks:
+      - visiteka-network
+
+networks:
+  visiteka-network:
+    driver: bridge
+
+volumes:
+  node_modules:
