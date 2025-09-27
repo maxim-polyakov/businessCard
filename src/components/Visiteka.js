@@ -20,6 +20,13 @@ const Visiteka = observer(() => {
                 url: 'https://misa.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/Misa_bot'
             },
+            {
+                title: 'Misa AI Gallery',
+                description: 'Сайт с рисунками Dalle сгенерированными мисой',
+                technologies: ['React', 'Node.js', 'PostgreSQL', 'Chart.js'],
+                url: 'https://misagallery.baxic.ru/gallery',
+                github: 'https://github.com/maxim-polyakov/misadrawing'
+            },
         ],
         socialLinks: [
             { name: 'GitHub', url: 'https://github.com/maxim-polyakov', icon: 'fab fa-github' },
