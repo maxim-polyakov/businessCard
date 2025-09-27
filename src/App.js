@@ -1,16 +1,12 @@
 import React  from 'react';
-import Visiteka from './components/Visiteka';
+import AppRouter from './components/AppRouter';
 import { observer } from "mobx-react-lite";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Spinner, Container } from "react-bootstrap";
+import { BrowserRouter } from "react-router-dom";
 
 const App = observer(() => {
     return (
         <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<Visiteka />} />
-                <Route path="/visiteka" element={<Visiteka />} />
-            </Routes>
+            <AppRouter />
         </BrowserRouter>
     );
 });
