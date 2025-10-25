@@ -23,7 +23,7 @@ const Visiteka = observer(() => {
             {
                 title: 'Misa AI Gallery',
                 description: 'Галерея изображений, сгенерированных с помощью DALL-E AI. Платформа для просмотра и управления коллекцией AI-артов.',
-                technologies: ['React', 'Django', 'Python', 'PostgreSQL', 'Bootstrap'],
+                technologies: ['React', 'Express', 'PostgreSQL', 'Bootstrap'],
                 url: 'https://misagallery.baxic.ru',
                 github: 'https://github.com/maxim-polyakov/misadrawing'
             },
