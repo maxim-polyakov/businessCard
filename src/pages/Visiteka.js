@@ -16,14 +16,14 @@ const Visiteka = observer(() => {
             {
                 title: 'Misa AI Chat',
                 description: 'Веб-приложение для взаимодействия с AI моделями ChatGPT и DALL-E. Включает чат-бота с искусственным интеллектом и генерацию изображений.',
-                technologies: ['React', 'Node.js', 'Express', 'OpenAI API', 'WebSocket', 'PostgreSQL'],
+                technologies: ['React', 'Django', 'Python', 'OpenAI API', 'WebSocket', 'PostgreSQL'],
                 url: 'https://misa.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/Misa_bot'
             },
             {
                 title: 'Misa AI Gallery',
                 description: 'Галерея изображений, сгенерированных с помощью DALL-E AI. Платформа для просмотра и управления коллекцией AI-артов.',
-                technologies: ['React', 'Node.js', 'Express', 'DALL-E API', 'PostgreSQL', 'Bootstrap'],
+                technologies: ['React', 'Django', 'Python', 'DALL-E API', 'PostgreSQL', 'Bootstrap'],
                 url: 'https://misagallery.baxic.ru',
                 github: 'https://github.com/maxim-polyakov/misadrawing'
             },
