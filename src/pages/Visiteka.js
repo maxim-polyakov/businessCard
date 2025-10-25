@@ -8,7 +8,7 @@ const Visiteka = observer(() => {
     const profileData = {
         name: "Поляков Максим",
         position: "Full Stack Developer",
-        description: "Привет! Я веб-разработчик с опытом создания современных и responsive веб-приложений. Специализируюсь на React, JavaScript и современных фреймворках.",
+        description: "Привет! Я веб-разработчик с опытом создания современных и responsive веб-приложений. Специализируюсь на современных фреймворках.",
         email: "maxim7012@gmail.com",
         phone: "+7 (952)441-26-71",
         location: "Нижний Новгород, Россия",
@@ -26,6 +26,13 @@ const Visiteka = observer(() => {
                 technologies: ['React', 'Node.js', 'PostgreSQL', 'Chart.js'],
                 url: 'https://misagallery.baxic.ru/gallery',
                 github: 'https://github.com/maxim-polyakov/misadrawing'
+            },
+            {
+                title: 'E-Commerce Platform',
+                description: 'Полнофункциональная платформа электронной коммерции с корзиной покупок, системой оплаты и управлением товарами.',
+                technologies: ['Java', 'Spring Boot', 'PostgreSQL', 'React', 'REST API'],
+                url: 'https://ecommerce.baxic.ru',
+                github: 'https://github.com/maxim-polyakov/e-commerce-java-two'
             },
         ],
         socialLinks: [
