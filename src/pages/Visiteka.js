@@ -34,13 +34,6 @@ const Visiteka = observer(() => {
                 url: 'https://ecommerce.baxic.ru',
                 github: 'https://github.com/maxim-polyakov/e-commerce-java-two'
             },
-            {
-                title: 'Канбан',
-                description: 'Канбан-приложение: квесты и уровни. Клиент-серверное приложение с доской задач.',
-                technologies: ['React', 'JavaScript', 'C#', 'Docker', 'CSS'],
-                url: 'https://canban.baxic.ru/',
-                github: 'https://github.com/maxim-polyakov/canban_desktop'
-            },
         ],
         socialLinks: [
             { name: 'GitHub', url: 'https://github.com/maxim-polyakov', icon: 'fab fa-github' },
