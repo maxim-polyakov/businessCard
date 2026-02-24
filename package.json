@@ -19,7 +19,7 @@
   "scripts": {
     "test": "react-scripts test",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && node -e \"require('fs').copyFileSync('build/index.html','build/404.html')\"",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
