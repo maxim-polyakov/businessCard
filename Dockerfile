@@ -16,5 +16,6 @@ RUN yarn global add serve
 
 EXPOSE 3000
 
-# SPA: -s (--single) + serve.json с rewrites ** → /index.html
-CMD ["serve", "-s", "build", "-l", "3000"]
+# Запуск из build: корень отдачи = build, serve.json подхватится, SPA fallback по -s и rewrites
+WORKDIR /app/build
+CMD ["serve", "-s", ".", "-l", "3000"]
