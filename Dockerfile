@@ -10,6 +10,9 @@ RUN yarn --frozen-lockfile
 COPY . .
 RUN yarn build
 
+# Устанавливаем serve для отдачи статики
+RUN yarn global add serve
+
 EXPOSE 3000
 
 # Запуск production-бандла
