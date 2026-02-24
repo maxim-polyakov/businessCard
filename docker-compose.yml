@@ -8,9 +8,6 @@ services:
     container_name: visiteka-react-app
     ports:
       - "3015:3000"
-    environment:
-      - NODE_ENV=development
-      - CHOKIDAR_USEPOLLING=true
     volumes:
       - .:/app
       - /app/node_modules
