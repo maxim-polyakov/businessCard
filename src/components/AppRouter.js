@@ -6,7 +6,6 @@ const AppRouter = observer(() => {
     return (
         <Routes>
             <Route path="/" element={<Visiteka />} />
-            <Route path="/visiteka" element={<Visiteka />} />
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
