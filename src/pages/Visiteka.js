@@ -8,7 +8,7 @@ const Visiteka = observer(() => {
     const profileData = {
         name: "Поляков Максим",
         position: "Full Stack Developer",
-        description: "Привет! Я веб-разработчик с опытом создания современных и responsive веб-приложений. Специализируюсь на современных фреймворках.",
+        description: "Привет! Я Fullstack-разработчик с опытом создания современных и responsive веб-приложений. Специализируюсь на React, Node.js, Java, Python и современных фреймворках.",
         email: "maxim7012@gmail.com",
         phone: "+7 (952)441-26-71",
         location: "Нижний Новгород, Россия",
