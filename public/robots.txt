@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+User-agent: Yandex
+Allow: /
+Clean-param: utm_source&utm_medium&utm_campaign
+
 Sitemap: https://baxic.ru/sitemap.xml
