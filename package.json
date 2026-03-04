@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
+    "sharp": "^0.33.5",
     "web-vitals": "^4.2.4"
   }
 }
