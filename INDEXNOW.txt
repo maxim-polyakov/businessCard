@@ -1,0 +1,21 @@
+IndexNow — уведомление Яндекса и Bing об обновлениях
+====================================================
+
+1. Ключ уже создан и размещён на сайте:
+   Файл: public/IndexNowBaxic2026KeyA1B2C3D4E5.txt
+   После сборки он доступен по адресу: https://baxic.ru/IndexNowBaxic2026KeyA1B2C3D4E5.txt
+   Яндекс проверяет этот файл при каждом запросе к API.
+
+2. После деплоя (когда обновили контент или заголовки) запустите:
+   yarn indexnow
+   или
+   node scripts/notify-indexnow.js
+
+   Скрипт отправит в Яндекс и Bing запрос об обновлении главной страницы. Это не гарантирует переиндексацию, но может ускорить обход.
+
+3. Проверка ключа:
+   Откройте в браузере https://baxic.ru/IndexNowBaxic2026KeyA1B2C3D4E5.txt
+   Должна отображаться одна строка: IndexNowBaxic2026KeyA1B2C3D4E5
+
+4. Вручную (один URL, GET):
+   https://yandex.com/indexnow?url=https://baxic.ru/&key=IndexNowBaxic2026KeyA1B2C3D4E5

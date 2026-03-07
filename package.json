@@ -20,7 +20,9 @@
     "test": "react-scripts test",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "favicon": "node scripts/generate-favicon.js",
+    "indexnow": "node scripts/notify-indexnow.js"
   },
   "eslintConfig": {
     "extends": [

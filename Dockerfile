@@ -13,5 +13,6 @@ RUN yarn global add serve
 
 EXPOSE 3000
 
-# Главная страница — визитка; -s отдаёт index.html при любом пути (лишние пути редиректятся на / в приложении)
-CMD ["serve", "-s", "build", "-l", "3000"]
+# При старте контейнера: yarn indexnow (уведомление Яндекса/Bing), затем serve
+RUN chmod +x scripts/docker-entrypoint.sh
+CMD ["sh", "scripts/docker-entrypoint.sh"]
