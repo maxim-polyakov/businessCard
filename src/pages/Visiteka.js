@@ -41,6 +41,13 @@ const Visiteka = observer(() => {
                 url: 'https://canban.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/canban_desktop'
             },
+            {
+                title: 'Lotus Game',
+                description: 'Игровой проект с клиентской и серверной частью.',
+                technologies: ['Java', 'JavaScript', 'CSS'],
+                url: 'https://lotus.baxic.ru/',
+                github: 'https://github.com/maxim-polyakov/lotus_game'
+            },
         ],
         socialLinks: [
             { name: 'GitHub', url: 'https://github.com/maxim-polyakov', icon: 'fab fa-github' },
