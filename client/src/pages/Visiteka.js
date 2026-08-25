@@ -129,10 +129,16 @@ const Visiteka = observer(() => {
                 method: 'POST',
                 body: payload,
             });
-            const result = await response.json().catch(() => ({}));
+            const contentType = response.headers.get('content-type') || '';
+            const isJsonResponse = contentType.includes('application/json');
+            const result = isJsonResponse ? await response.json() : {};
 
             if (!response.ok) {
                 throw new Error(result.detail || 'Не удалось отправить заявку');
+            }
+
+            if (!isJsonResponse || result.ok !== true) {
+                throw new Error('Backend API вернул некорректный ответ. Проверьте проксирование /api на сервер.');
             }
 
             setFormData(initialFormState);
