@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from canban import CanbanIntegrationError, create_canban_quest
 from database import ContactSubmission, get_session, init_db
 from logging_config import setup_logging
 from storage import upload_bytes_to_s3
@@ -20,7 +21,7 @@ setup_logging()
 logger = logging.getLogger(__name__)
 
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024
-ALLOWED_FILE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".pdf"}
+ALLOWED_FILE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".bmp", ".gif", ".pdf", ".doc", ".docx", ".txt"}
 
 
 def get_cors_origins() -> list[str]:
@@ -94,6 +95,7 @@ async def upload_attachment(file: UploadFile | None, request_id: str) -> dict[st
         "size": len(content),
         "s3_key": s3_key,
         "url": attachment_url,
+        "content": content,
     }
 
 
@@ -142,6 +144,30 @@ async def create_contact_request(
         await session.rollback()
         logger.exception("Failed to save contact request: request_id=%s", request_id)
         raise HTTPException(status_code=500, detail="Failed to save contact request") from error
+
+    try:
+        canban_quest_id = await create_canban_quest(
+            name=name,
+            company=company,
+            email=str(email),
+            phone=phone,
+            message=message,
+            attachment=uploaded_file,
+        )
+        submission.canban_quest_id = canban_quest_id
+        submission.canban_sync_error = None
+        await session.commit()
+        logger.info(
+            "Canban quest created: request_id=%s quest_id=%s has_attachment=%s",
+            request_id,
+            canban_quest_id,
+            uploaded_file is not None,
+        )
+    except CanbanIntegrationError as error:
+        submission.canban_sync_error = str(error)[:1000]
+        await session.commit()
+        logger.exception("Failed to sync contact request with Canban: request_id=%s", request_id)
+        raise HTTPException(status_code=502, detail="Failed to create Canban task") from error
 
     logger.info(
         "Contact request saved: request_id=%s has_attachment=%s",

@@ -42,6 +42,8 @@ class ContactSubmission(Base):
     attachment_size: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     attachment_s3_key: Mapped[str | None] = mapped_column(String(512), nullable=True)
     attachment_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
+    canban_quest_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
+    canban_sync_error: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 async def get_session():

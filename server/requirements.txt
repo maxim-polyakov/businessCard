@@ -6,3 +6,4 @@ SQLAlchemy
 asyncpg
 python-dotenv
 aioboto3
+httpx

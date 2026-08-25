@@ -1,9 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Badge, Button, Col, Container, Row } from 'react-bootstrap';
 import './Visiteka.css';
 
 const Visiteka = observer(() => {
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3016/api';
+    const initialFormState = {
+        name: '',
+        company: '',
+        email: '',
+        phone: '',
+        message: '',
+        consent: false,
+        attachment: null,
+    };
+    const [formData, setFormData] = useState(initialFormState);
+    const [formStatus, setFormStatus] = useState({ type: '', message: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const profileData = {
         name: 'Поляков Максим',
         position: 'Full Stack Developer',
@@ -70,6 +84,64 @@ const Visiteka = observer(() => {
             { name: 'GitHub', url: 'https://github.com/maxim-polyakov', icon: 'fab fa-github' },
             { name: 'Telegram', url: 'https://t.me/The_Baxic', icon: 'fab fa-telegram' },
         ],
+    };
+
+    const handleInputChange = (event) => {
+        const { name, value, type, checked, files } = event.target;
+        setFormData((currentData) => ({
+            ...currentData,
+            [name]: type === 'checkbox' ? checked : files ? files[0] : value,
+        }));
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setFormStatus({ type: '', message: '' });
+
+        const payload = new FormData();
+        payload.append('name', formData.name);
+        payload.append('email', formData.email);
+        payload.append('message', formData.message);
+        payload.append('consent', String(formData.consent));
+
+        if (formData.company) {
+            payload.append('company', formData.company);
+        }
+
+        if (formData.phone) {
+            payload.append('phone', formData.phone);
+        }
+
+        if (formData.attachment) {
+            payload.append('attachment', formData.attachment);
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/contact`, {
+                method: 'POST',
+                body: payload,
+            });
+            const result = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                throw new Error(result.detail || 'Не удалось отправить заявку');
+            }
+
+            setFormData(initialFormState);
+            event.target.reset();
+            setFormStatus({
+                type: 'success',
+                message: 'Заявка отправлена. Я свяжусь с вами в ближайшее время.',
+            });
+        } catch (error) {
+            setFormStatus({
+                type: 'error',
+                message: error.message || 'Ошибка отправки. Попробуйте позже.',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -184,28 +256,121 @@ const Visiteka = observer(() => {
                 </section>
 
                 <section className="contact-section" id="contacts">
-                    <div>
+                    <div className="contact-copy">
                         <p className="eyebrow">[ Обсудить, посоветоваться, спросить ]</p>
                         <h2>Связаться со мной</h2>
-                    </div>
-                    <div className="contact-grid">
-                        <a href={`mailto:${profileData.email}`}>
-                            <span>01</span>
-                            <strong>{profileData.email}</strong>
-                        </a>
-                        <a href={`tel:${profileData.phone.replace(/[^\d+]/g, '')}`}>
-                            <span>02</span>
-                            <strong>{profileData.phone}</strong>
-                        </a>
-                        {profileData.socialLinks.map((social, index) => (
-                            <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer">
-                                <span>{String(index + 3).padStart(2, '0')}</span>
-                                <strong>
-                                    <i className={social.icon}></i> {social.name}
-                                </strong>
+                        <p>
+                            Опишите задачу в пару предложений. Если уже есть ТЗ, макет или бриф,
+                            приложите файл к заявке.
+                        </p>
+                        <div className="contact-grid">
+                            <a href={`mailto:${profileData.email}`}>
+                                <span>01</span>
+                                <strong>{profileData.email}</strong>
                             </a>
-                        ))}
+                            <a href={`tel:${profileData.phone.replace(/[^\d+]/g, '')}`}>
+                                <span>02</span>
+                                <strong>{profileData.phone}</strong>
+                            </a>
+                            {profileData.socialLinks.map((social, index) => (
+                                <a href={social.url} key={social.name} target="_blank" rel="noopener noreferrer">
+                                    <span>{String(index + 3).padStart(2, '0')}</span>
+                                    <strong>
+                                        <i className={social.icon}></i> {social.name}
+                                    </strong>
+                                </a>
+                            ))}
+                        </div>
                     </div>
+                    <form className="contact-form" onSubmit={handleSubmit}>
+                        <div className="form-row">
+                            <label>
+                                <span>01 Меня зовут</span>
+                                <input
+                                    name="name"
+                                    type="text"
+                                    placeholder="Ваше имя"
+                                    minLength="2"
+                                    maxLength="120"
+                                    required
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                            <label>
+                                <span>02 Я работаю в компании</span>
+                                <input
+                                    name="company"
+                                    type="text"
+                                    placeholder="Название компании"
+                                    maxLength="160"
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                        </div>
+                        <div className="form-row">
+                            <label>
+                                <span>03 Связаться со мной по e-mail</span>
+                                <input
+                                    name="email"
+                                    type="email"
+                                    placeholder="Ваш e-mail"
+                                    required
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                            <label>
+                                <span>04 Позвонить мне</span>
+                                <input
+                                    name="phone"
+                                    type="tel"
+                                    placeholder="Ваш номер телефона"
+                                    maxLength="40"
+                                    onChange={handleInputChange}
+                                />
+                            </label>
+                        </div>
+                        <label>
+                            <span>05 Сообщение</span>
+                            <textarea
+                                name="message"
+                                placeholder="Опишите задачу"
+                                minLength="5"
+                                maxLength="4000"
+                                rows="4"
+                                required
+                                onChange={handleInputChange}
+                            />
+                        </label>
+                        <label className="file-field">
+                            <input
+                                name="attachment"
+                                type="file"
+                                accept=".jpg,.jpeg,.png,.bmp,.gif,.pdf,.doc,.docx,.txt"
+                                onChange={handleInputChange}
+                            />
+                            <span>
+                                <i className="fas fa-paperclip"></i>
+                                {formData.attachment ? formData.attachment.name : 'Прикрепить ТЗ или файл'}
+                            </span>
+                            <small>jpg, jpeg, png, bmp, gif, pdf, doc, docx, txt до 10 МБ</small>
+                        </label>
+                        <label className="checkbox-field">
+                            <input
+                                name="consent"
+                                type="checkbox"
+                                required
+                                checked={formData.consent}
+                                onChange={handleInputChange}
+                            />
+                            <span>Я согласен на обработку персональных данных для ответа на заявку</span>
+                        </label>
+                        <Button className="primary-action form-submit" type="submit" disabled={isSubmitting}>
+                            {isSubmitting ? 'Отправляю...' : 'Отправить'}
+                        </Button>
+                        {formStatus.message && (
+                            <p className={`form-status ${formStatus.type}`}>{formStatus.message}</p>
+                        )}
+                    </form>
                 </section>
             </Container>
         </main>

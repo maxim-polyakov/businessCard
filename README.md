@@ -24,6 +24,7 @@
 - **python-multipart** — приём файлов из формы
 - **SQLAlchemy Async ORM** + **PostgreSQL** — хранение заявок
 - **S3-compatible storage** — хранение вложений формы
+- **Canban API** — создание задачи из заявки и прикрепление ТЗ
 
 ## Возможности
 
@@ -32,6 +33,7 @@
 - `robots.txt`, `sitemap.xml`
 - Уведомление поисковиков через [IndexNow](https://www.indexnow.org/) (Яндекс и Bing) при деплое
 - Backend endpoint для заявок: `POST /api/contact`
+- Создание задачи в Canban при новой заявке
 
 ## Быстрый старт
 

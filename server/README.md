@@ -25,6 +25,9 @@ S3_REGION=
 S3_PUBLIC_URL_BASE=
 LOG_LEVEL=INFO
 LOG_FILE=./logs/server.log
+CANBAN_API_URL=https://canbanapi.baxic.ru/api
+CANBAN_EMAIL=
+CANBAN_PASSWORD=
 ```
 
 ## Run with Docker Compose
@@ -62,14 +65,15 @@ Fields:
 - `company` - optional
 - `phone` - optional
 - `consent` - required, must be `true`
-- `attachment` - optional, allowed: `jpg`, `jpeg`, `png`, `bmp`, `gif`, `pdf`, up to 10 MB
+- `attachment` - optional, allowed: `jpg`, `jpeg`, `png`, `bmp`, `gif`, `pdf`, `doc`, `docx`, `txt`, up to 10 MB
 
 Requests are saved to the database table `contact_submissions`.
 Uploaded files are saved to S3. The database stores file metadata, `attachment_s3_key`, and `attachment_url`.
+Each request is also synced to Canban as a quest. If an attachment exists, it is uploaded to the Canban quest too.
 
 ## Environment
 
-Optional variables:
+Current `.env`:
 
 ```bash
 DATABASE_URL=postgresql+asyncpg://user:password@host:5432/database
@@ -82,7 +86,28 @@ S3_REGION=
 S3_PUBLIC_URL_BASE=
 LOG_LEVEL=INFO
 LOG_FILE=./logs/server.log
+CANBAN_API_URL=https://canbanapi.baxic.ru/api
+CANBAN_EMAIL=
+CANBAN_PASSWORD=
 ```
+
+## Canban Integration
+
+Required:
+
+- `CANBAN_EMAIL` / `CANBAN_PASSWORD` - service account credentials for Canban API. The server logs in and caches JWT automatically.
+
+Optional:
+
+- `CANBAN_COLUMN_TITLE` - target column title, defaults to `К выполнению`.
+- `CANBAN_COLUMN_ID` - target column UUID. If empty, the server finds a column by `CANBAN_COLUMN_TITLE`.
+- `CANBAN_BOARD_ID` / `CANBAN_BOARD_NAME` - override automatic customer board selection.
+- `CANBAN_TEAM_ID` / `CANBAN_TEAM_NAME` - override automatic customer team selection.
+- `CANBAN_NOTIFICATION_USER_IDS` - comma-separated Canban user IDs that should always receive quest notifications.
+- `CANBAN_ASSIGNEE_ID` - user assigned to created quests.
+- Request email is sent to Canban as `externalNotificationRecipients`, so the requester can receive status notifications without a Canban account.
+
+By default, the server finds or creates a Canban team and board named after the customer from the form (`company` if present, otherwise `name`). The task is then created in the `К выполнению` column on that board.
 
 ## Logging
 
