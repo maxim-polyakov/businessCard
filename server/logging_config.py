@@ -38,3 +38,10 @@ def setup_logging() -> None:
         handlers=[file_handler, stream_handler],
         force=True,
     )
+
+    # Uvicorn configures its own loggers, so attach our handlers explicitly.
+    for logger_name in ("uvicorn", "uvicorn.error", "uvicorn.access"):
+        uvicorn_logger = logging.getLogger(logger_name)
+        uvicorn_logger.handlers = [file_handler, stream_handler]
+        uvicorn_logger.setLevel(getattr(logging, log_level, logging.INFO))
+        uvicorn_logger.propagate = False

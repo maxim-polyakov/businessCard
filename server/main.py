@@ -126,6 +126,7 @@ async def upload_attachment(file: UploadFile | None, request_id: str) -> dict[st
 
 @app.get("/api/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
+    logger.info("Health check requested")
     return HealthResponse(status="ok")
 
 
