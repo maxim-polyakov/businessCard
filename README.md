@@ -1,10 +1,15 @@
 # Сайт-визитка (baxic.ru)
 
-Одностраничное портфолио Fullstack-разработчика: контакты, проекты и ссылки на соцсети. Сайт оптимизирован под SEO (мета-теги, Open Graph, JSON-LD, sitemap, IndexNow).
+Проект разделён на клиентскую часть и backend:
+
+- `client` — React-сайт-визитка.
+- `server` — FastAPI backend для контактной формы.
 
 **Продакшен:** [https://baxic.ru](https://baxic.ru)
 
 ## Стек
+
+### Client
 
 - **React 19** + Create React App
 - **React Router** — маршрутизация
@@ -12,18 +17,28 @@
 - **MobX** — состояние (observer-компоненты)
 - **Docker** + `serve` — production-сборка и раздача статики
 
+### Server
+
+- **FastAPI** — API контактной формы
+- **Uvicorn** — ASGI-сервер
+- **python-multipart** — приём файлов из формы
+- **SQLAlchemy Async ORM** + **PostgreSQL** — хранение заявок
+- **S3-compatible storage** — хранение вложений формы
+
 ## Возможности
 
 - Профиль, контакты и блок проектов с ссылками на демо и GitHub
 - SEO: canonical, keywords, Open Graph, Twitter Card, schema.org `Person`
 - `robots.txt`, `sitemap.xml`
 - Уведомление поисковиков через [IndexNow](https://www.indexnow.org/) (Яндекс и Bing) при деплое
+- Backend endpoint для заявок: `POST /api/contact`
 
 ## Быстрый старт
 
-### Локальная разработка
+### Client
 
 ```bash
+cd client
 yarn install
 yarn start
 ```
@@ -33,10 +48,24 @@ yarn start
 ### Сборка
 
 ```bash
+cd client
 yarn build
 ```
 
-Артефакты попадают в папку `build/`.
+Артефакты попадают в папку `client/build/`.
+
+### Server
+
+```bash
+cd server
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+API будет доступен на [http://localhost:8000](http://localhost:8000).
+Строка подключения к базе задаётся в `server/.env` через `DATABASE_URL`.
 
 ### Docker
 
@@ -45,6 +74,13 @@ docker compose up -d --build
 ```
 
 Сайт будет доступен на порту **3015** (внутри контейнера — 3000).
+FastAPI backend будет доступен на порту **3016** (внутри контейнера — 8000).
+
+Проверка backend:
+
+```bash
+curl http://localhost:3016/api/health
+```
 
 При старте контейнера выполняется `yarn indexnow` (уведомление поисковиков), затем `serve -s build`.
 
@@ -54,31 +90,38 @@ docker compose up -d --build
 
 | Команда | Описание |
 |---------|----------|
-| `yarn start` | Dev-сервер с hot reload |
-| `yarn build` | Production-сборка |
-| `yarn test` | Тесты (Jest) |
-| `yarn favicon` | Генерация `favicon-120.png` из исходника |
-| `yarn indexnow` | Отправка URL в Яндекс и Bing (IndexNow) |
+| `cd client && yarn start` | Dev-сервер с hot reload |
+| `cd client && yarn build` | Production-сборка |
+| `cd client && yarn test` | Тесты (Jest) |
+| `cd client && yarn favicon` | Генерация `favicon-120.png` из исходника |
+| `cd client && yarn indexnow` | Отправка URL в Яндекс и Bing (IndexNow) |
 
 ## Структура проекта
 
 ```
-├── public/           # index.html, SEO, robots.txt, sitemap.xml, ключ IndexNow
-├── src/
-│   ├── pages/        # Visiteka.js — основная страница
-│   ├── components/   # AppRouter.js
-│   └── App.js
-├── scripts/
-│   ├── docker-entrypoint.sh
-│   ├── notify-indexnow.js
-│   └── generate-favicon.js
-├── Dockerfile
+├── client/
+│   ├── public/           # index.html, SEO, robots.txt, sitemap.xml, ключ IndexNow
+│   ├── src/
+│   │   ├── pages/        # Visiteka.js — основная страница
+│   │   ├── components/   # AppRouter.js
+│   │   └── App.js
+│   ├── scripts/
+│   │   ├── docker-entrypoint.sh
+│   │   ├── notify-indexnow.js
+│   │   └── generate-favicon.js
+│   ├── Dockerfile
+│   └── package.json
+├── server/
+│   ├── main.py
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── README.md
 └── docker-compose.yml
 ```
 
 ## Редактирование контента
 
-Данные профиля, проекты и соцсети задаются в `src/pages/Visiteka.js`. Мета-теги и JSON-LD — в `public/index.html`.
+Данные профиля, проекты и соцсети задаются в `client/src/pages/Visiteka.js`. Мета-теги и JSON-LD — в `client/public/index.html`.
 
 ## Лицензия
 

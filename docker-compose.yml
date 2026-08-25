@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
   react-app:
     build:
-      context: .
+      context: ./client
       dockerfile: Dockerfile
     container_name: visiteka-react-app
     ports:
@@ -19,9 +17,24 @@ services:
     networks:
       - visiteka-network
 
+  fastapi-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: visiteka-fastapi-server
+    ports:
+      - "3016:8000"
+    env_file:
+      - ./server/.env
+    volumes:
+      - server_logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - visiteka-network
+
 networks:
   visiteka-network:
     driver: bridge
 
 volumes:
-  node_modules:
+  server_logs:

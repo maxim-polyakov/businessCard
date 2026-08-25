@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic[email]
+SQLAlchemy
+asyncpg
+python-dotenv
+aioboto3
