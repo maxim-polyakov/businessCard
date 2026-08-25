@@ -225,6 +225,7 @@ async def resolve_canban_team_id(name: str, company: str | None) -> str:
         team = item.get("team") or {}
         if (team.get("name") or "").lower() == normalized_customer_team_name:
             await try_ensure_team_member_by_email(team["id"], CANBAN_AUTO_MEMBER_EMAIL)
+            logger.info("Canban team found: team_id=%s", team["id"])
             return team["id"]
 
     team = await request_canban(
@@ -241,6 +242,7 @@ async def resolve_canban_team_id(name: str, company: str | None) -> str:
         raise CanbanIntegrationError("Canban API did not return team id")
 
     await try_ensure_team_member_by_email(team_id, CANBAN_AUTO_MEMBER_EMAIL)
+    logger.info("Canban team created: team_id=%s", team_id)
     return team_id
 
 
@@ -266,10 +268,12 @@ async def resolve_canban_board_id(name: str, company: str | None) -> str:
         normalized_board_name = CANBAN_BOARD_NAME.lower()
         for board in boards:
             if (board.get("name") or "").lower() == normalized_board_name:
+                logger.info("Canban board found by override name: board_id=%s", board["id"])
                 return board["id"]
 
     for board in boards:
         if (board.get("name") or "").lower() == normalized_customer_board_name:
+            logger.info("Canban board found: board_id=%s", board["id"])
             return board["id"]
 
     board = await request_canban(
@@ -286,6 +290,7 @@ async def resolve_canban_board_id(name: str, company: str | None) -> str:
     if not board_id:
         raise CanbanIntegrationError("Canban API did not return board id")
 
+    logger.info("Canban board created: board_id=%s team_id=%s", board_id, team_id)
     return board_id
 
 
@@ -300,6 +305,7 @@ async def resolve_canban_column_id(name: str, company: str | None) -> str:
 
     for column in columns:
         if (column.get("title") or "").lower() == normalized_column_title:
+            logger.info("Canban column resolved: column_id=%s board_id=%s", column["id"], board_id)
             return column["id"]
 
     raise CanbanIntegrationError(f"Canban column was not found: {CANBAN_COLUMN_TITLE}")
