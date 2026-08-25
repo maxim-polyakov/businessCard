@@ -74,6 +74,7 @@ async def get_access_token() -> str:
     if _cached_access_token and _cached_access_token_expires_at and _cached_access_token_expires_at > now:
         return _cached_access_token
 
+    logger.info("Canban login started: email=%s", CANBAN_EMAIL)
     async with httpx.AsyncClient(timeout=20) as client:
         response = await client.post(
             f"{CANBAN_API_URL}/Auth/login",
@@ -97,6 +98,7 @@ async def get_access_token() -> str:
 
     _cached_access_token = access_token
     _cached_access_token_expires_at = now + timedelta(seconds=max(expires_in_seconds - 60, 60))
+    logger.info("Canban login completed: email=%s expires_in_seconds=%s", CANBAN_EMAIL, expires_in_seconds)
 
     return access_token
 
@@ -113,6 +115,7 @@ async def request_canban(
     json: dict[str, Any] | None = None,
     files: dict[str, Any] | None = None,
 ) -> Any:
+    logger.info("Canban API request started: method=%s path=%s", method, path)
     async with httpx.AsyncClient(timeout=20) as client:
         response = await client.request(
             method,
@@ -121,6 +124,13 @@ async def request_canban(
             json=json,
             files=files,
         )
+
+    logger.info(
+        "Canban API request completed: method=%s path=%s status_code=%s",
+        method,
+        path,
+        response.status_code,
+    )
 
     if response.status_code >= 400:
         raise CanbanIntegrationError(
@@ -182,6 +192,7 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
     members = await request_canban("GET", f"/Teams/{team_id}/members")
 
     if any((member.get("email") or "").lower() == normalized_email for member in members or []):
+        logger.info("Canban team member already exists: team_id=%s email=%s", team_id, email)
         return
 
     users = await request_canban("GET", "/Users")
@@ -193,6 +204,7 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
     if user and user.get("id"):
         try:
             await request_canban("POST", f"/Teams/{team_id}/members/{user['id']}")
+            logger.info("Canban team member added: team_id=%s email=%s user_id=%s", team_id, email, user["id"])
         except CanbanIntegrationError as error:
             if "400" not in str(error) and "409" not in str(error):
                 raise
@@ -203,6 +215,7 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
         f"/Teams/{team_id}/members/invite",
         json={"email": email},
     )
+    logger.info("Canban team member invited: team_id=%s email=%s", team_id, email)
 
 
 async def try_ensure_team_member_by_email(team_id: str, email: str) -> None:
@@ -347,6 +360,7 @@ async def create_canban_quest(
     message: str,
     attachment: dict[str, Any] | None,
 ) -> str:
+    logger.info("Canban quest creation started: email=%s company=%s", email, company or "-")
     notification_recipient_ids = await get_notification_recipient_ids(email)
     column_id = await resolve_canban_column_id(name, company)
     title_name = company or name
@@ -378,6 +392,7 @@ async def create_canban_quest(
         raise CanbanIntegrationError("Canban API did not return quest id")
 
     if attachment:
+        logger.info("Canban quest attachment upload started: quest_id=%s filename=%s", quest_id, attachment["original_name"])
         await request_canban(
             "POST",
             f"/Quests/{quest_id}/attachments",
@@ -389,5 +404,7 @@ async def create_canban_quest(
                 )
             },
         )
+        logger.info("Canban quest attachment upload completed: quest_id=%s", quest_id)
 
+    logger.info("Canban quest creation completed: quest_id=%s column_id=%s", quest_id, column_id)
     return quest_id

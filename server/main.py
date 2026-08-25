@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Any
 
-from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -45,6 +45,24 @@ app.add_middleware(
 )
 
 
+@app.middleware("http")
+async def log_http_requests(request: Request, call_next):
+    logger.info("HTTP request started: method=%s path=%s", request.method, request.url.path)
+    try:
+        response = await call_next(request)
+    except Exception:
+        logger.exception("HTTP request failed: method=%s path=%s", request.method, request.url.path)
+        raise
+
+    logger.info(
+        "HTTP request completed: method=%s path=%s status_code=%s",
+        request.method,
+        request.url.path,
+        response.status_code,
+    )
+    return response
+
+
 @app.on_event("startup")
 async def startup() -> None:
     await init_db()
@@ -68,6 +86,7 @@ def sanitize_filename(filename: str) -> str:
 
 async def upload_attachment(file: UploadFile | None, request_id: str) -> dict[str, Any] | None:
     if file is None or not file.filename:
+        logger.info("Contact request has no attachment: request_id=%s", request_id)
         return None
 
     extension = Path(file.filename).suffix.lower()
@@ -81,6 +100,12 @@ async def upload_attachment(file: UploadFile | None, request_id: str) -> dict[st
     safe_name = sanitize_filename(file.filename)
     content_type = file.content_type or "application/octet-stream"
     s3_key = f"contact-attachments/{request_id}/{safe_name}"
+    logger.info(
+        "Uploading contact attachment to S3: request_id=%s filename=%s size=%s",
+        request_id,
+        safe_name,
+        len(content),
+    )
 
     try:
         attachment_url = await upload_bytes_to_s3(content, s3_key, content_type)
@@ -119,6 +144,13 @@ async def create_contact_request(
         raise HTTPException(status_code=400, detail="Personal data consent is required")
 
     request_id = uuid.uuid4().hex
+    logger.info(
+        "Contact request received: request_id=%s email=%s company=%s has_attachment=%s",
+        request_id,
+        email,
+        company or "-",
+        bool(attachment and attachment.filename),
+    )
     uploaded_file = await upload_attachment(attachment, request_id)
 
     submission = ContactSubmission(
@@ -140,6 +172,7 @@ async def create_contact_request(
     try:
         session.add(submission)
         await session.commit()
+        logger.info("Contact request saved to database: request_id=%s", request_id)
     except Exception as error:
         await session.rollback()
         logger.exception("Failed to save contact request: request_id=%s", request_id)
