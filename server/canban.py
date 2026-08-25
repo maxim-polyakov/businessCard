@@ -1,4 +1,5 @@
 import os
+import logging
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
@@ -13,6 +14,9 @@ load_dotenv(APP_DIR / ".env")
 
 class CanbanIntegrationError(RuntimeError):
     pass
+
+
+logger = logging.getLogger(__name__)
 
 
 def get_env(name: str) -> str | None:
@@ -201,9 +205,16 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
     )
 
 
+async def try_ensure_team_member_by_email(team_id: str, email: str) -> None:
+    try:
+        await ensure_team_member_by_email(team_id, email)
+    except CanbanIntegrationError:
+        logger.exception("Failed to add or invite Canban team member: team_id=%s email=%s", team_id, email)
+
+
 async def resolve_canban_team_id(name: str, company: str | None) -> str:
     if CANBAN_TEAM_ID:
-        await ensure_team_member_by_email(CANBAN_TEAM_ID, CANBAN_AUTO_MEMBER_EMAIL)
+        await try_ensure_team_member_by_email(CANBAN_TEAM_ID, CANBAN_AUTO_MEMBER_EMAIL)
         return CANBAN_TEAM_ID
 
     customer_team_name = build_customer_team_name(name, company)
@@ -213,7 +224,7 @@ async def resolve_canban_team_id(name: str, company: str | None) -> str:
     for item in teams:
         team = item.get("team") or {}
         if (team.get("name") or "").lower() == normalized_customer_team_name:
-            await ensure_team_member_by_email(team["id"], CANBAN_AUTO_MEMBER_EMAIL)
+            await try_ensure_team_member_by_email(team["id"], CANBAN_AUTO_MEMBER_EMAIL)
             return team["id"]
 
     team = await request_canban(
@@ -229,7 +240,7 @@ async def resolve_canban_team_id(name: str, company: str | None) -> str:
     if not team_id:
         raise CanbanIntegrationError("Canban API did not return team id")
 
-    await ensure_team_member_by_email(team_id, CANBAN_AUTO_MEMBER_EMAIL)
+    await try_ensure_team_member_by_email(team_id, CANBAN_AUTO_MEMBER_EMAIL)
     return team_id
 
 
