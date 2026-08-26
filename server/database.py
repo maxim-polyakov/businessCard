@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
-from sqlalchemy import BigInteger, Boolean, DateTime, String, Text
+from sqlalchemy import BigInteger, Boolean, DateTime, String, Text, text
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
@@ -54,3 +54,21 @@ async def get_session():
 async def init_db() -> None:
     async with engine.begin() as connection:
         await connection.run_sync(Base.metadata.create_all)
+        await connection.execute(
+            text("ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS attachment_s3_key VARCHAR(512)")
+        )
+        await connection.execute(
+            text("ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS attachment_url VARCHAR(1000)")
+        )
+        await connection.execute(
+            text("ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS canban_quest_id VARCHAR(64)")
+        )
+        await connection.execute(
+            text("ALTER TABLE contact_submissions ADD COLUMN IF NOT EXISTS canban_sync_error TEXT")
+        )
+        await connection.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS ix_contact_submissions_canban_quest_id "
+                "ON contact_submissions (canban_quest_id)"
+            )
+        )
