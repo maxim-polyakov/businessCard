@@ -383,7 +383,7 @@ const Visiteka = observer(() => {
                                 <i className="fas fa-paperclip"></i>
                                 {formData.attachment ? formData.attachment.name : 'Прикрепить ТЗ или файл'}
                             </span>
-                            <small>jpg, jpeg, png, bmp, gif, pdf, doc, docx, txt до 10 МБ</small>
+                            <small>jpg, jpeg, png, bmp, gif, pdf, doc, docx, txt</small>
                         </label>
                         <label className="checkbox-field">
                             <input
