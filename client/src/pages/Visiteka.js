@@ -5,6 +5,24 @@ import './Visiteka.css';
 
 const Visiteka = observer(() => {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3016/api';
+    const formatApiError = (detail) => {
+        if (!detail) {
+            return 'Не удалось отправить заявку';
+        }
+
+        if (typeof detail === 'string') {
+            return detail;
+        }
+
+        if (Array.isArray(detail)) {
+            return detail
+                .map((item) => item?.msg || item?.message || JSON.stringify(item))
+                .join('; ');
+        }
+
+        return detail.message || JSON.stringify(detail);
+    };
+
     const initialFormState = {
         name: '',
         company: '',
@@ -134,7 +152,7 @@ const Visiteka = observer(() => {
             const result = isJsonResponse ? await response.json() : {};
 
             if (!response.ok) {
-                throw new Error(result.detail || 'Не удалось отправить заявку');
+                throw new Error(formatApiError(result.detail));
             }
 
             if (!isJsonResponse || result.ok !== true) {
