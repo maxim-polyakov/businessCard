@@ -3,9 +3,9 @@ from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
-from sqlalchemy import BigInteger, Boolean, DateTime, String, Text, text
+from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, Text, text
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 APP_DIR = Path(__file__).resolve().parent
@@ -44,6 +44,25 @@ class ContactSubmission(Base):
     attachment_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     canban_quest_id: Mapped[str | None] = mapped_column(String(64), nullable=True, index=True)
     canban_sync_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    attachments: Mapped[list["ContactAttachment"]] = relationship(
+        back_populates="submission",
+        cascade="all, delete-orphan",
+    )
+
+
+class ContactAttachment(Base):
+    __tablename__ = "contact_attachments"
+
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    submission_id: Mapped[int] = mapped_column(ForeignKey("contact_submissions.id", ondelete="CASCADE"), index=True)
+    original_name: Mapped[str] = mapped_column(String(255))
+    stored_name: Mapped[str] = mapped_column(String(255))
+    content_type: Mapped[str] = mapped_column(String(120))
+    size: Mapped[int] = mapped_column(BigInteger)
+    s3_key: Mapped[str] = mapped_column(String(512))
+    url: Mapped[str] = mapped_column(String(1000))
+
+    submission: Mapped[ContactSubmission] = relationship(back_populates="attachments")
 
 
 async def get_session():
@@ -70,5 +89,11 @@ async def init_db() -> None:
             text(
                 "CREATE INDEX IF NOT EXISTS ix_contact_submissions_canban_quest_id "
                 "ON contact_submissions (canban_quest_id)"
+            )
+        )
+        await connection.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS ix_contact_attachments_submission_id "
+                "ON contact_attachments (submission_id)"
             )
         )

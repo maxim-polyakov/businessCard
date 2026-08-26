@@ -331,7 +331,7 @@ def build_quest_description(
     email: str,
     phone: str | None,
     message: str,
-    attachment_url: str | None,
+    attachments: list[dict[str, Any]],
 ) -> str:
     lines = [
         "Заявка с сайта baxic.ru",
@@ -345,8 +345,10 @@ def build_quest_description(
         message,
     ]
 
-    if attachment_url:
-        lines.extend(["", f"ТЗ / вложение: {attachment_url}"])
+    if attachments:
+        lines.append("")
+        lines.append("ТЗ / вложения:")
+        lines.extend(f"- {attachment['original_name']}: {attachment['url']}" for attachment in attachments)
 
     return "\n".join(lines)
 
@@ -358,7 +360,7 @@ async def create_canban_quest(
     email: str,
     phone: str | None,
     message: str,
-    attachment: dict[str, Any] | None,
+    attachments: list[dict[str, Any]],
 ) -> str:
     logger.info("Canban quest creation started: email=%s company=%s", email, company or "-")
     notification_recipient_ids = await get_notification_recipient_ids(email)
@@ -372,7 +374,7 @@ async def create_canban_quest(
             email=email,
             phone=phone,
             message=message,
-            attachment_url=attachment["url"] if attachment else None,
+            attachments=attachments,
         ),
         "columnId": column_id,
         "assigneeId": CANBAN_ASSIGNEE_ID,
@@ -391,8 +393,12 @@ async def create_canban_quest(
     if not quest_id:
         raise CanbanIntegrationError("Canban API did not return quest id")
 
-    if attachment:
-        logger.info("Canban quest attachment upload started: quest_id=%s filename=%s", quest_id, attachment["original_name"])
+    for attachment in attachments:
+        logger.info(
+            "Canban quest attachment upload started: quest_id=%s filename=%s",
+            quest_id,
+            attachment["original_name"],
+        )
         await request_canban(
             "POST",
             f"/Quests/{quest_id}/attachments",
@@ -404,7 +410,11 @@ async def create_canban_quest(
                 )
             },
         )
-        logger.info("Canban quest attachment upload completed: quest_id=%s", quest_id)
+        logger.info(
+            "Canban quest attachment upload completed: quest_id=%s filename=%s",
+            quest_id,
+            attachment["original_name"],
+        )
 
     logger.info("Canban quest creation completed: quest_id=%s column_id=%s", quest_id, column_id)
     return quest_id

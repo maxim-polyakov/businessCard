@@ -30,7 +30,7 @@ const Visiteka = observer(() => {
         phone: '',
         message: '',
         consent: false,
-        attachment: null,
+        attachments: [],
     };
     const [formData, setFormData] = useState(initialFormState);
     const [formStatus, setFormStatus] = useState({ type: '', message: '' });
@@ -115,7 +115,7 @@ const Visiteka = observer(() => {
         const { name, value, type, checked, files } = event.target;
         setFormData((currentData) => ({
             ...currentData,
-            [name]: type === 'checkbox' ? checked : files ? files[0] : value,
+            [name]: type === 'checkbox' ? checked : files ? Array.from(files) : value,
         }));
     };
 
@@ -138,9 +138,9 @@ const Visiteka = observer(() => {
             payload.append('phone', formData.phone);
         }
 
-        if (formData.attachment) {
-            payload.append('attachment', formData.attachment);
-        }
+        formData.attachments.forEach((file) => {
+            payload.append('attachments', file);
+        });
 
         try {
             const response = await fetch(`${apiUrl}/contact`, {
@@ -291,8 +291,8 @@ const Visiteka = observer(() => {
                         <p className="eyebrow">[ Обсудить, посоветоваться, спросить ]</p>
                         <h2>Связаться со мной</h2>
                         <p>
-                            Опишите задачу в пару предложений. Если уже есть ТЗ, макет или бриф,
-                            приложите файл к заявке.
+                            Опишите задачу в пару предложений. Если уже есть ТЗ, макеты или брифы,
+                            приложите файлы к заявке.
                         </p>
                         <div className="contact-grid">
                             <a href={`mailto:${profileData.email}`}>
@@ -374,15 +374,25 @@ const Visiteka = observer(() => {
                         </label>
                         <label className="file-field">
                             <input
-                                name="attachment"
+                                name="attachments"
                                 type="file"
                                 accept=".jpg,.jpeg,.png,.bmp,.gif,.pdf,.doc,.docx,.txt"
+                                multiple
                                 onChange={handleInputChange}
                             />
                             <span>
                                 <i className="fas fa-paperclip"></i>
-                                {formData.attachment ? formData.attachment.name : 'Прикрепить ТЗ или файл'}
+                                {formData.attachments.length > 0
+                                    ? `Выбрано файлов: ${formData.attachments.length}`
+                                    : 'Прикрепить ТЗ или файлы'}
                             </span>
+                            {formData.attachments.length > 0 && (
+                                <ul className="file-list">
+                                    {formData.attachments.map((file) => (
+                                        <li key={`${file.name}-${file.size}`}>{file.name}</li>
+                                    ))}
+                                </ul>
+                            )}
                             <small>jpg, jpeg, png, bmp, gif, pdf, doc, docx, txt</small>
                         </label>
                         <label className="checkbox-field">

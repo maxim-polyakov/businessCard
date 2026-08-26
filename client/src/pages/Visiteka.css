@@ -414,6 +414,15 @@
     font-weight: 700;
 }
 
+.file-list {
+    display: grid;
+    gap: 4px;
+    margin: 4px 0 0;
+    padding-left: 18px;
+    color: rgba(245, 247, 239, 0.7);
+    font-size: 0.85rem;
+}
+
 .file-field:hover {
     border-color: rgba(200, 255, 77, 0.6);
 }
