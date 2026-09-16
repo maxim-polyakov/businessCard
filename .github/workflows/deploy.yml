@@ -20,6 +20,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Create environment files
+        env:
+          SERVER_ENV: ${{ secrets.SERVER_ENV }}
+          CLIENT_ENV: ${{ secrets.CLIENT_ENV }}
+        run: |
+          printf '%s\n' "$SERVER_ENV" > server/.env
+          printf '%s\n' "$CLIENT_ENV" > client/.env
+
       - name: Copy project to server
         uses: appleboy/scp-action@v1.0.0
         with:
