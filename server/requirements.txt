@@ -3,6 +3,7 @@ uvicorn[standard]
 python-multipart
 pydantic[email]
 SQLAlchemy
+greenlet
 asyncpg
 python-dotenv
 aioboto3
