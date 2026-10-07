@@ -387,13 +387,27 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
   done
 fi
 
+k3s_image_present() {
+  local image=$1 present_images
+  present_images=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null 9>&- || true)
+  grep -Fxq -e "$image" -e "docker.io/$image" <<<"$present_images"
+}
+
 import_image() {
   local image=$1 attempt archive
   archive=$(mktemp "${TMPDIR:-/tmp}/compose-k3s-sync-image.XXXXXX")
   for attempt in 1 2 3; do
     log "importing $image into k3s (attempt $attempt)"
-    if docker image save -o "$archive" "$image" &&
-      "${k3s_ctr[@]}" -n k8s.io images import "$archive"; then
+    # Close the deploy lock fd in children so stale-lock clearing never
+    # targets an in-flight import.
+    if docker image save -o "$archive" "$image" 9>&- &&
+      "${k3s_ctr[@]}" -n k8s.io images import "$archive" 9>&-; then
+      rm -f "$archive"
+      return 0
+    fi
+    # ctr may be interrupted after containerd already stored the image.
+    if k3s_image_present "$image"; then
+      log "$image present in k3s containerd despite import error; continuing"
       rm -f "$archive"
       return 0
     fi
@@ -479,8 +493,7 @@ for row in "${sync_services[@]}"; do
     log "using registry digest $deployment_image for multi-platform image"
   else
     docker image tag "$source_image" "$immutable_image"
-    present_images=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null || true)
-    if grep -Fxq -e "$immutable_image" -e "docker.io/$immutable_image" <<<"$present_images"; then
+    if k3s_image_present "$immutable_image"; then
       log "$immutable_image already present in k3s containerd; skipping import"
     else
       import_image "$immutable_image" || die "failed to import $immutable_image into k3s"
