@@ -1,4 +1,4 @@
-name: Deploy
+﻿name: Deploy
 
 on:
   workflow_dispatch:
@@ -88,6 +88,7 @@ jobs:
           script_stop: true
           command_timeout: 60m
           script: |
-bash "$DEPLOY_PATH/scripts/compose-k3s-sync.sh" \
-
-              --project-dir "$DEPLOY_PATH"
+            cd "$DEPLOY_PATH"
+            bash "$DEPLOY_PATH/scripts/compose-k3s-sync.sh" \
+              --project-dir "$DEPLOY_PATH" \
+              --env-file client/.env
