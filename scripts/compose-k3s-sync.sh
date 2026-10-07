@@ -382,6 +382,40 @@ compose_image_exists() {
   return 1
 }
 
+log_disk_usage() {
+  df -h / "${TMPDIR:-/tmp}" "$(docker info --format '{{.DockerRootDir}}' 2>/dev/null || echo /)" \
+    2>/dev/null | awk '!seen[$0]++' | sed 's/^/[compose-k3s-sync]   /' || true
+}
+
+# Each deploy leaves a new compose-sync/<project>-<service>:<id> tag plus build
+# cache behind; without pruning the host runs out of disk mid-build.
+reclaim_docker_space() {
+  log "reclaiming Docker disk space"
+  log_disk_usage
+  local stale
+  stale=$(docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null |
+    grep -E "^compose-sync/${kube_project}-" || true)
+  if [[ -n "$stale" ]]; then
+    xargs -r docker image rm -f <<<"$stale" >/dev/null 2>&1 || true
+  fi
+  docker image prune -f >/dev/null 2>&1 || true
+  docker builder prune -af >/dev/null 2>&1 || true
+  log_disk_usage
+}
+
+# Drop older compose-sync images of this service from k3s containerd once the
+# new one is rolled out.
+prune_k3s_images() {
+  local service=$1 keep=$2
+  local refs
+  refs=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null |
+    grep -E "^(docker\.io/)?compose-sync/${kube_project}-${service}:" |
+    grep -vE "(^|/)${keep//./\\.}$" || true)
+  [[ -n "$refs" ]] || return 0
+  xargs -r "${k3s_ctr[@]}" -n k8s.io images rm <<<"$refs" >/dev/null 2>&1 || true
+  log "pruned stale k3s images for $service"
+}
+
 compose_build_service() {
   local service=$1
   local source_image=$2
@@ -404,6 +438,7 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
   export COMPOSE_BAKE="${COMPOSE_BAKE:-0}"
   export BUILDX_NO_DEFAULT_ATTESTATIONS="${BUILDX_NO_DEFAULT_ATTESTATIONS:-1}"
   mkdir -p "$TMPDIR"
+  reclaim_docker_space
   build_services=()
   for row in "${sync_services[@]}"; do
     IFS=$'\t' read -r service _ _ _ <<<"$row"
@@ -532,6 +567,8 @@ for row in "${sync_services[@]}"; do
     continue
   fi
   log "updated $namespace/$deployment"
+  [[ "$deployment_image" == "$immutable_image" ]] &&
+    prune_k3s_images "$service" "$immutable_image"
   ((rolled_out += 1))
 done
 
