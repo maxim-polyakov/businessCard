@@ -312,70 +312,31 @@ if [[ "$dry_run" != true && "$skip_build" != true && "$patch_only" != true ]]; t
   "${compose[@]}" down --remove-orphans
 fi
 
-# Compose (bake) can fail after the image is built while writing its
-# metadata file in /tmp; plain docker build has no metadata-file step.
-docker_build_fallback() {
-  local service=$1 context dockerfile image target spec arg
-  local -a lines docker_args=()
-  spec=$(
-    python3 - "$config_json" "$service" "$image_separator" <<'PY'
-import json
-import sys
-
-with open(sys.argv[1], encoding="utf-8") as stream:
-    config = json.load(stream)
-name = sys.argv[2]
-service = config["services"][name]
-build = service.get("build")
-if build is None:
-    raise SystemExit(0)
-if isinstance(build, str):
-    build = {"context": build}
-image = service.get("image") or f"{config['name']}{sys.argv[3]}{name}"
-fields = [
-    build.get("context", "."),
-    build.get("dockerfile", ""),
-    image,
-    build.get("target", ""),
-]
-print("\t".join(fields))
-args = build.get("args") or {}
-if isinstance(args, list):
-    args = dict(item.split("=", 1) if "=" in item else (item, "") for item in args)
-for key, value in args.items():
-    if value is not None:
-        print(f"{key}={value}")
-PY
-  )
-  [[ -n "$spec" ]] || return 1
-  mapfile -t lines <<<"$spec"
-  IFS=$'\t' read -r context dockerfile image target <<<"${lines[0]}"
-  if [[ "$dockerfile" == /* ]]; then
-    docker_args+=(-f "$dockerfile")
-  elif [[ -n "$dockerfile" ]]; then
-    docker_args+=(-f "$context/$dockerfile")
-  fi
-  [[ -n "$target" ]] && docker_args+=(--target "$target")
-  for arg in "${lines[@]:1}"; do
-    docker_args+=(--build-arg "$arg")
+compose_image_exists() {
+  local service=$1
+  local source_image=$2
+  local candidate
+  for candidate in \
+    "$source_image" \
+    "${project_name}${image_separator}${service}" \
+    "${project_name}-${service}"; do
+    if docker image inspect "$candidate" >/dev/null 2>&1; then
+      printf '%s' "$candidate"
+      return 0
+    fi
   done
-  [[ "$no_cache" == true ]] && docker_args+=(--no-cache)
-  log "docker build $service -> $image"
-  docker build "${docker_args[@]}" -t "$image" "$context"
+  return 1
 }
 
 compose_build_service() {
   local service=$1
   local source_image=$2
+  local found
   if "${compose[@]}" build "${build_args[@]}" "$service"; then
     return 0
   fi
-  log "compose build failed for $service; falling back to docker build"
-  if docker_build_fallback "$service"; then
-    return 0
-  fi
-  if docker image inspect "$source_image" >/dev/null 2>&1; then
-    log "compose build exited non-zero but image exists ($source_image); continuing (metadata-file flake)"
+  if found=$(compose_image_exists "$service" "$source_image"); then
+    log "compose build exited non-zero but image exists ($found); continuing (metadata-file flake)"
     return 0
   fi
   return 1
@@ -394,16 +355,11 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
     IFS=$'\t' read -r service _ _ _ <<<"$row"
     build_services+=("$service")
   done
-  if ((${#build_services[@]} <= 1)); then
-    IFS=$'\t' read -r service source_image _ _ <<<"${sync_services[0]}"
+  for row in "${sync_services[@]}"; do
+    IFS=$'\t' read -r service source_image _ _ <<<"$row"
+    log "building service $service"
     compose_build_service "$service" "$source_image" || die "compose build failed for $service"
-  else
-    for row in "${sync_services[@]}"; do
-      IFS=$'\t' read -r service source_image _ _ <<<"$row"
-      log "building service $service"
-      compose_build_service "$service" "$source_image" || die "compose build failed for $service"
-    done
-  fi
+  done
 fi
 
 local_ips=" $(hostname -I 2>/dev/null || true) "
