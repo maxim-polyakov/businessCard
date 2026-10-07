@@ -27,6 +27,8 @@ Environment:
   COMPOSE_BAKE                    Default 0 — avoid compose bake metadata-file races on build
   BUILDX_NO_DEFAULT_ATTESTATIONS  Default 1 — skip provenance attestation (metadata-file flake)
   TMPDIR                          Default /tmp for compose build temp files
+  COMPOSE_K3S_LOCK_WAIT           Seconds to wait for per-project flock (0 = fail immediately)
+  COMPOSE_K3S_CLEAR_ORPHAN_LOCK   Set to 1 to fuser -k stale lock holders after wait (default 1)
 EOF
 }
 
@@ -279,8 +281,31 @@ PY
 
 lock_dir=${COMPOSE_K3S_LOCK_DIR:-${XDG_RUNTIME_DIR:-/tmp}}
 mkdir -p "$lock_dir"
-exec 9>"${lock_dir}/compose-k3s-sync-${kube_project}.lock"
-flock -n 9 || die "another deployment of $kube_project is already running"
+lock_file="${lock_dir}/compose-k3s-sync-${kube_project}.lock"
+exec 9>"$lock_file"
+lock_wait=${COMPOSE_K3S_LOCK_WAIT:-0}
+clear_orphan=${COMPOSE_K3S_CLEAR_ORPHAN_LOCK:-1}
+acquire_deploy_lock() {
+  if flock -n 9; then
+    return 0
+  fi
+  if [[ "$lock_wait" =~ ^[0-9]+$ && "$lock_wait" -gt 0 ]]; then
+    log "deploy lock busy for $kube_project; waiting up to ${lock_wait}s"
+    if flock -w "$lock_wait" 9; then
+      return 0
+    fi
+  fi
+  if [[ "$clear_orphan" == 1 ]] && command -v fuser >/dev/null 2>&1; then
+    log "clearing stale lock holders for $kube_project"
+    fuser -k "$lock_file" 2>/dev/null || true
+    sleep 2
+    if flock -n 9; then
+      return 0
+    fi
+  fi
+  return 1
+}
+acquire_deploy_lock || die "another deployment of $kube_project is already running (or lock wait expired)"
 
 mapfile -t sync_services < <(
   python3 - "$config_json" "$image_separator" <<'PY'
@@ -328,67 +353,11 @@ compose_image_exists() {
   return 1
 }
 
-# Compose (bake) can fail after the image is built while writing its
-# metadata file in /tmp; plain docker build has no metadata-file step.
-docker_build_fallback() {
-  local service=$1 context dockerfile image target spec arg
-  local -a lines docker_args=()
-  spec=$(
-    python3 - "$config_json" "$service" "$image_separator" <<'PY'
-import json
-import sys
-
-with open(sys.argv[1], encoding="utf-8") as stream:
-    config = json.load(stream)
-name = sys.argv[2]
-service = config["services"][name]
-build = service.get("build")
-if build is None:
-    raise SystemExit(0)
-if isinstance(build, str):
-    build = {"context": build}
-image = service.get("image") or f"{config['name']}{sys.argv[3]}{name}"
-fields = [
-    build.get("context", "."),
-    build.get("dockerfile", ""),
-    image,
-    build.get("target", ""),
-]
-print("\t".join(fields))
-args = build.get("args") or {}
-if isinstance(args, list):
-    args = dict(item.split("=", 1) if "=" in item else (item, "") for item in args)
-for key, value in args.items():
-    if value is not None:
-        print(f"{key}={value}")
-PY
-  )
-  [[ -n "$spec" ]] || return 1
-  mapfile -t lines <<<"$spec"
-  IFS=$'\t' read -r context dockerfile image target <<<"${lines[0]}"
-  if [[ "$dockerfile" == /* ]]; then
-    docker_args+=(-f "$dockerfile")
-  elif [[ -n "$dockerfile" ]]; then
-    docker_args+=(-f "$context/$dockerfile")
-  fi
-  [[ -n "$target" ]] && docker_args+=(--target "$target")
-  for arg in "${lines[@]:1}"; do
-    docker_args+=(--build-arg "$arg")
-  done
-  [[ "$no_cache" == true ]] && docker_args+=(--no-cache)
-  log "docker build $service -> $image"
-  docker build "${docker_args[@]}" -t "$image" "$context"
-}
-
 compose_build_service() {
   local service=$1
   local source_image=$2
   local found
   if "${compose[@]}" build "${build_args[@]}" "$service"; then
-    return 0
-  fi
-  log "compose build failed for $service; falling back to docker build"
-  if docker_build_fallback "$service"; then
     return 0
   fi
   if found=$(compose_image_exists "$service" "$source_image"); then
