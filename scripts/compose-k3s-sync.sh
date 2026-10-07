@@ -291,17 +291,9 @@ for row in "${sync_services[@]}"; do
     pull_policy=IfNotPresent
     log "using registry digest $deployment_image for multi-platform image"
   else
+    log "importing $source_image as $immutable_image"
     docker image tag "$source_image" "$immutable_image"
-    # The tag is derived from the image ID, so an existing tag has identical
-    # content; skip the slow save/import round-trip on unchanged services.
-    containerd_images=$(k3s ctr -n k8s.io images ls -q)
-    if grep -Fxq -e "docker.io/$immutable_image" -e "$immutable_image" \
-      <<<"$containerd_images"; then
-      log "$immutable_image already present in k3s containerd"
-    else
-      log "importing $source_image as $immutable_image"
-      docker image save "$immutable_image" | k3s ctr -n k8s.io images import -
-    fi
+    docker image save "$immutable_image" | k3s ctr -n k8s.io images import -
   fi
 
   container=$("${kube[@]}" get deployment "$deployment" -n "$namespace" \
