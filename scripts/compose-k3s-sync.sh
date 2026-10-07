@@ -104,24 +104,27 @@ fix_maildev_container_command() {
   local workdir
   workdir=$(docker image inspect "$inspect_img" --format '{{.Config.WorkingDir}}')
   [[ -n "$workdir" ]] || workdir=/home/node/app
-  # Compose→k8s often sets command: ["bin/maildev"] without WORKDIR → CrashLoopBackOff.
+  # Compose→k8s: command ["bin/maildev"] without WORKDIR, or args ["-c","exec node …"] vs entrypoint node.
   "${kube[@]}" patch deployment "$deployment" -n "$namespace" --type=json \
     -p='[{"op":"remove","path":"/spec/template/spec/containers/0/command"}]' \
     >/dev/null 2>&1 || true
-  # Patch workingDir on every container (smtp Deployments are single-container).
-  local containers
-  containers=$("${kube[@]}" get deployment "$deployment" -n "$namespace" \
-    -o jsonpath='{range .spec.template.spec.containers[*]}{.name}{"\n"}{end}')
-  while IFS= read -r cname; do
-    [[ -n "$cname" ]] || continue
-    local one
-    one=$(WD="$workdir" CN="$cname" python3 -c '
-import json, os
-print(json.dumps({"spec": {"template": {"spec": {"containers": [{"name": os.environ["CN"], "workingDir": os.environ["WD"]}]}}}}))
+  local merge_patch
+  merge_patch=$("${kube[@]}" get deployment "$deployment" -n "$namespace" -o json | WD="$workdir" python3 -c '
+import json, os, sys
+deploy = json.load(sys.stdin)
+wd = os.environ["WD"]
+out = []
+for c in deploy["spec"]["template"]["spec"]["containers"]:
+    entry = {"name": c["name"], "workingDir": wd}
+    args = c.get("args") or []
+    if len(args) >= 2 and args[0] == "-c" and "maildev" in str(args[1]):
+        entry["command"] = ["/bin/sh", "-c"]
+        entry["args"] = [args[1]]
+    out.append(entry)
+print(json.dumps({"spec": {"template": {"spec": {"containers": out}}}}))
 ')
-    "${kube[@]}" patch deployment "$deployment" -n "$namespace" --type merge \
-      -p "$one" >/dev/null 2>&1 || true
-  done <<<"$containers"
+  "${kube[@]}" patch deployment "$deployment" -n "$namespace" --type merge \
+    -p "$merge_patch" >/dev/null 2>&1 || true
   log "Maildev command/workdir fix for $namespace/$deployment (workdir=$workdir)"
 }
 
@@ -382,40 +385,6 @@ compose_image_exists() {
   return 1
 }
 
-log_disk_usage() {
-  df -h / "${TMPDIR:-/tmp}" "$(docker info --format '{{.DockerRootDir}}' 2>/dev/null || echo /)" \
-    2>/dev/null | awk '!seen[$0]++' | sed 's/^/[compose-k3s-sync]   /' || true
-}
-
-# Each deploy leaves a new compose-sync/<project>-<service>:<id> tag plus build
-# cache behind; without pruning the host runs out of disk mid-build.
-reclaim_docker_space() {
-  log "reclaiming Docker disk space"
-  log_disk_usage
-  local stale
-  stale=$(docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null |
-    grep -E "^compose-sync/${kube_project}-" || true)
-  if [[ -n "$stale" ]]; then
-    xargs -r docker image rm -f <<<"$stale" >/dev/null 2>&1 || true
-  fi
-  docker image prune -f >/dev/null 2>&1 || true
-  docker builder prune -af >/dev/null 2>&1 || true
-  log_disk_usage
-}
-
-# Drop older compose-sync images of this service from k3s containerd once the
-# new one is rolled out.
-prune_k3s_images() {
-  local service=$1 keep=$2
-  local refs
-  refs=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null |
-    grep -E "^(docker\.io/)?compose-sync/${kube_project}-${service}:" |
-    grep -vE "(^|/)${keep//./\\.}$" || true)
-  [[ -n "$refs" ]] || return 0
-  xargs -r "${k3s_ctr[@]}" -n k8s.io images rm <<<"$refs" >/dev/null 2>&1 || true
-  log "pruned stale k3s images for $service"
-}
-
 compose_build_service() {
   local service=$1
   local source_image=$2
@@ -438,7 +407,6 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
   export COMPOSE_BAKE="${COMPOSE_BAKE:-0}"
   export BUILDX_NO_DEFAULT_ATTESTATIONS="${BUILDX_NO_DEFAULT_ATTESTATIONS:-1}"
   mkdir -p "$TMPDIR"
-  reclaim_docker_space
   build_services=()
   for row in "${sync_services[@]}"; do
     IFS=$'\t' read -r service _ _ _ <<<"$row"
@@ -567,8 +535,6 @@ for row in "${sync_services[@]}"; do
     continue
   fi
   log "updated $namespace/$deployment"
-  [[ "$deployment_image" == "$immutable_image" ]] &&
-    prune_k3s_images "$service" "$immutable_image"
   ((rolled_out += 1))
 done
 
