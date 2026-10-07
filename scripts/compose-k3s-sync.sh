@@ -125,9 +125,9 @@ for c in deploy["spec"]["template"]["spec"]["containers"]:
         script = args[0]
     if script:
         env_map = {e["name"]: e.get("value", "") for e in c.get("env") or []}
-        m = re.search(r"maildev\.js\s+(.*)", script, re.S)
+        m = re.search(r"maildev\\.js\\s+(.*)", script, re.S)
         if m and env_map:
-            flags = re.sub(r"\$\{(\w+)\}", lambda mo: env_map.get(mo.group(1), ""), m.group(1))
+            flags = re.sub(r"\\$\\{(\\w+)\\}", lambda mo: env_map.get(mo.group(1), ""), m.group(1))
             entry["args"] = shlex.split(flags)
         else:
             entry["command"] = ["/bin/sh", "-c"]
@@ -137,6 +137,9 @@ print(json.dumps({"spec": {"template": {"spec": {"containers": out}}}}))
 ')
   "${kube[@]}" patch deployment "$deployment" -n "$namespace" --type merge \
     -p "$merge_patch" >/dev/null 2>&1 || true
+  "${kube[@]}" patch deployment "$deployment" -n "$namespace" --type=json \
+    -p='[{"op":"remove","path":"/spec/template/spec/containers/0/command"}]' \
+    >/dev/null 2>&1 || true
   log "Maildev command/workdir fix for $namespace/$deployment (workdir=$workdir)"
 }
 
@@ -411,69 +414,7 @@ compose_build_service() {
   return 1
 }
 
-log_disk_usage() {
-  df -h / "${TMPDIR:-/tmp}" "$(docker info --format '{{.DockerRootDir}}' 2>/dev/null || echo /)" \
-    2>/dev/null | awk '!seen[$0]++' | sed 's/^/[compose-k3s-sync]   /' || true
-}
-
-# Each deploy leaves a new compose-sync/<project>-<service>:<id> tag plus build
-# cache behind; without pruning the host runs out of disk mid-build.
-reclaim_docker_space() {
-  log "reclaiming Docker disk space"
-  log_disk_usage
-  local stale
-  stale=$(docker image ls --format '{{.Repository}}:{{.Tag}}' 2>/dev/null |
-    grep -E "^compose-sync/${kube_project}-" || true)
-  if [[ -n "$stale" ]]; then
-    xargs -r docker image rm -f <<<"$stale" >/dev/null 2>&1 || true
-  fi
-  docker image prune -f >/dev/null 2>&1 || true
-  docker builder prune -af >/dev/null 2>&1 || true
-  log_disk_usage
-}
-
-# Drop older compose-sync images of this service from k3s containerd once the
-# new one is rolled out.
-prune_k3s_images() {
-  local service=$1 keep=$2
-  local refs
-  refs=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null |
-    grep -E "^(docker\.io/)?compose-sync/${kube_project}-${service}:" |
-    grep -vE "(^|/)${keep//./\\.}$" || true)
-  [[ -n "$refs" ]] || return 0
-  xargs -r "${k3s_ctr[@]}" -n k8s.io images rm <<<"$refs" >/dev/null 2>&1 || true
-  log "pruned stale k3s images for $service"
-}
-
-k3s_image_present() {
-  local image=$1 present_images
-  present_images=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null 9>&- || true)
-  grep -Fxq -e "$image" -e "docker.io/$image" <<<"$present_images"
-}
-
-# Stream docker save into ctr: snap-confined Docker cannot write to the host
-# /tmp, so a temp archive file is not usable.
-import_image() {
-  local image=$1 attempt
-  for attempt in 1 2 3; do
-    log "importing $image into k3s (attempt $attempt)"
-    if docker image save "$image" 9>&- |
-      "${k3s_ctr[@]}" -n k8s.io images import - 9>&-; then
-      return 0
-    fi
-    # ctr may be interrupted after containerd already stored the image.
-    if k3s_image_present "$image"; then
-      log "$image present in k3s containerd despite import error; continuing"
-      return 0
-    fi
-    log "import of $image failed (attempt $attempt)"
-    sleep $((attempt * 5))
-  done
-  return 1
-}
-
 if [[ "$skip_build" != true && "$dry_run" != true ]]; then
-  reclaim_docker_space
   log "building Compose project $project_name"
   build_args=()
   [[ "$no_cache" == true ]] && build_args+=(--no-cache)
@@ -578,11 +519,7 @@ for row in "${sync_services[@]}"; do
   else
     log "importing $source_image as $immutable_image"
     docker image tag "$source_image" "$immutable_image"
-    if k3s_image_present "$immutable_image"; then
-      log "$immutable_image already present in k3s containerd; skipping import"
-    else
-      import_image "$immutable_image" || die "failed to import $immutable_image into k3s"
-    fi
+    docker image save "$immutable_image" | "${k3s_ctr[@]}" -n k8s.io images import -
   fi
 
   container=$("${kube[@]}" get deployment "$deployment" -n "$namespace" \
@@ -614,9 +551,6 @@ for row in "${sync_services[@]}"; do
   fi
   log "updated $namespace/$deployment"
   ((rolled_out += 1))
-  if [[ "$deployment_image" == "$immutable_image" ]]; then
-    prune_k3s_images "$service" "$immutable_image"
-  fi
 done
 
 ((matched_services > 0)) || die "no matching Deployments found for $kube_project"
