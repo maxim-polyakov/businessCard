@@ -24,8 +24,9 @@ Environment:
   COMPOSE_K3S_EXTRA_NAMESERVERS   Public DNS for Maildev/SMTP Deployments (default: 8.8.8.8,1.1.1.1)
   COMPOSE_K3S_SKIP_SMTP_DNS       Set to 1 to skip Maildev dnsConfig on the Deployment
   COMPOSE_K3S_STRICT_ROLLOUT      Set to 1 to fail when kubectl rollout status fails
-  COMPOSE_BAKE                    Default 0 — avoid compose bake metadata-file races on build
-  TMPDIR                          Default /tmp for compose build temp files
+  COMPOSE_BAKE                    Default false — avoid compose bake metadata-file races on build
+  BUILDX_NO_DEFAULT_ATTESTATIONS  Default 1 — skip provenance metadata that races on temp files
+  COMPOSE_K3S_BUILD_TMPDIR        Private temp dir for compose build files (default: mktemp -d)
 EOF
 }
 
@@ -315,22 +316,33 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
   log "building Compose project $project_name"
   build_args=()
   [[ "$no_cache" == true ]] && build_args+=(--no-cache)
-  export TMPDIR="${TMPDIR:-/tmp}"
-  export COMPOSE_BAKE="${COMPOSE_BAKE:-0}"
-  mkdir -p "$TMPDIR"
+  build_tmpdir=${COMPOSE_K3S_BUILD_TMPDIR:-$(mktemp -d "${TMPDIR:-/tmp}/compose-k3s-build.XXXXXX")}
+  mkdir -p "$build_tmpdir"
+  export TMPDIR="$build_tmpdir"
+  export COMPOSE_BAKE="${COMPOSE_BAKE:-false}"
+  export BUILDX_NO_DEFAULT_ATTESTATIONS="${BUILDX_NO_DEFAULT_ATTESTATIONS:-1}"
+  compose_build() {
+    if "${compose[@]}" build "${build_args[@]}" "$@"; then
+      return 0
+    fi
+    log "compose build failed; retrying once ${*:-(all services)}"
+    mkdir -p "$TMPDIR"
+    "${compose[@]}" build "${build_args[@]}" "$@"
+  }
   build_services=()
   for row in "${sync_services[@]}"; do
     IFS=$'\t' read -r service _ _ _ <<<"$row"
     build_services+=("$service")
   done
   if ((${#build_services[@]} <= 1)); then
-    "${compose[@]}" build "${build_args[@]}"
+    compose_build
   else
     for service in "${build_services[@]}"; do
       log "building service $service"
-      "${compose[@]}" build "${build_args[@]}" "$service"
+      compose_build "$service"
     done
   fi
+  [[ -n "${COMPOSE_K3S_BUILD_TMPDIR:-}" ]] || rm -rf "$build_tmpdir"
 fi
 
 local_ips=" $(hostname -I 2>/dev/null || true) "
