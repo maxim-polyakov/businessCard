@@ -317,10 +317,7 @@ with open(sys.argv[1], encoding="utf-8") as stream:
 
 project = config["name"]
 separator = sys.argv[2]
-has_builds = any("build" in service for service in config["services"].values())
 for name, service in config["services"].items():
-    if has_builds and "build" not in service:
-        continue
     if "build" not in service and not service.get("image"):
         continue
     explicit_image = "1" if service.get("image") else "0"
@@ -381,42 +378,20 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
     build_services+=("$service")
   done
   for row in "${sync_services[@]}"; do
-    IFS=$'\t' read -r service source_image _ _ <<<"$row"
+    IFS=$'\t' read -r service source_image _ explicit_image <<<"$row"
+    if [[ "$explicit_image" == 1 ]]; then
+      if docker image inspect "$source_image" >/dev/null 2>&1; then
+        log "image already present for $service ($source_image)"
+      else
+        log "pulling image for service $service ($source_image)"
+        docker pull "$source_image" || die "docker pull failed for $source_image"
+      fi
+      continue
+    fi
     log "building service $service"
     compose_build_service "$service" "$source_image" || die "compose build failed for $service"
   done
 fi
-
-k3s_image_present() {
-  local image=$1 present_images
-  present_images=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null 9>&- || true)
-  grep -Fxq -e "$image" -e "docker.io/$image" <<<"$present_images"
-}
-
-import_image() {
-  local image=$1 attempt archive
-  archive=$(mktemp "${TMPDIR:-/tmp}/compose-k3s-sync-image.XXXXXX")
-  for attempt in 1 2 3; do
-    log "importing $image into k3s (attempt $attempt)"
-    # Close the deploy lock fd in children so stale-lock clearing never
-    # targets an in-flight import.
-    if docker image save -o "$archive" "$image" 9>&- &&
-      "${k3s_ctr[@]}" -n k8s.io images import "$archive" 9>&-; then
-      rm -f "$archive"
-      return 0
-    fi
-    # ctr may be interrupted after containerd already stored the image.
-    if k3s_image_present "$image"; then
-      log "$image present in k3s containerd despite import error; continuing"
-      rm -f "$archive"
-      return 0
-    fi
-    log "import of $image failed (attempt $attempt)"
-    sleep $((attempt * 5))
-  done
-  rm -f "$archive"
-  return 1
-}
 
 local_ips=" $(hostname -I 2>/dev/null || true) "
 matched_services=0
@@ -492,12 +467,9 @@ for row in "${sync_services[@]}"; do
     pull_policy=IfNotPresent
     log "using registry digest $deployment_image for multi-platform image"
   else
+    log "importing $source_image as $immutable_image"
     docker image tag "$source_image" "$immutable_image"
-    if k3s_image_present "$immutable_image"; then
-      log "$immutable_image already present in k3s containerd; skipping import"
-    else
-      import_image "$immutable_image" || die "failed to import $immutable_image into k3s"
-    fi
+    docker image save "$immutable_image" | "${k3s_ctr[@]}" -n k8s.io images import -
   fi
 
   container=$("${kube[@]}" get deployment "$deployment" -n "$namespace" \
