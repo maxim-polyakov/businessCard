@@ -387,6 +387,23 @@ if [[ "$skip_build" != true && "$dry_run" != true ]]; then
   done
 fi
 
+import_image() {
+  local image=$1 attempt archive
+  archive=$(mktemp "${TMPDIR:-/tmp}/compose-k3s-sync-image.XXXXXX")
+  for attempt in 1 2 3; do
+    log "importing $image into k3s (attempt $attempt)"
+    if docker image save -o "$archive" "$image" &&
+      "${k3s_ctr[@]}" -n k8s.io images import "$archive"; then
+      rm -f "$archive"
+      return 0
+    fi
+    log "import of $image failed (attempt $attempt)"
+    sleep $((attempt * 5))
+  done
+  rm -f "$archive"
+  return 1
+}
+
 local_ips=" $(hostname -I 2>/dev/null || true) "
 matched_services=0
 rolled_out=0
@@ -461,9 +478,13 @@ for row in "${sync_services[@]}"; do
     pull_policy=IfNotPresent
     log "using registry digest $deployment_image for multi-platform image"
   else
-    log "importing $source_image as $immutable_image"
     docker image tag "$source_image" "$immutable_image"
-    docker image save "$immutable_image" | "${k3s_ctr[@]}" -n k8s.io images import -
+    present_images=$("${k3s_ctr[@]}" -n k8s.io images ls -q 2>/dev/null || true)
+    if grep -Fxq -e "$immutable_image" -e "docker.io/$immutable_image" <<<"$present_images"; then
+      log "$immutable_image already present in k3s containerd; skipping import"
+    else
+      import_image "$immutable_image" || die "failed to import $immutable_image into k3s"
+    fi
   fi
 
   container=$("${kube[@]}" get deployment "$deployment" -n "$namespace" \
