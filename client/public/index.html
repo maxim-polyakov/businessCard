@@ -23,11 +23,17 @@
   <meta property="og:locale" content="ru_RU" />
   <meta property="og:locale:alternate" content="en_US" />
   <meta property="og:site_name" content="baxic.ru" />
+  <meta property="og:image" content="https://baxic.ru/favicon.png" />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="256" />
+  <meta property="og:image:height" content="256" />
+  <meta property="og:image:alt" content="BAXIC.DEV — логотип" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Поляков Максим — Fullstack-разработчик / Fullstack Developer" />
   <meta name="twitter:description" content="Fullstack developer, Fullstack-разработчик. Nizhny Novgorod. Portfolio and contacts." />
+  <meta name="twitter:image" content="https://baxic.ru/favicon.png" />
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
   <link
@@ -39,10 +45,12 @@
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
   />
 
-  <!-- Вкладка: только logo.png (без favicon-120 в rel="icon", иначе браузер подставляет 120px и сжимает). Для Яндекса — favicon-120 только в apple-touch-icon -->
-  <link rel="icon" href="logo.png" type="image/png" />
-  <link rel="shortcut icon" href="logo.png" type="image/png" />
-  <link rel="apple-touch-icon" href="favicon-120.png" sizes="120x120" />
+  <!-- Favicon / PWA icons -->
+  <link rel="icon" href="%PUBLIC_URL%/favicon.png" type="image/png" sizes="256x256" />
+  <link rel="icon" href="%PUBLIC_URL%/favicon-48x48.png" type="image/png" sizes="48x48" />
+  <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.png" type="image/png" />
+  <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" sizes="180x180" />
+  <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
   <!-- JSON-LD: Person для поисковой выдачи (RU + EN) -->
   <script type="application/ld+json">
