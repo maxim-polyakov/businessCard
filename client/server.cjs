@@ -64,7 +64,7 @@ const renderIndex = (template, request, url) => {
     const language = requestLanguage(request, url);
     const preview = previews[language] || previews.en;
     const pageUrl = `${publicUrl}${url.pathname}${url.search}`;
-    const imageUrl = `${publicUrl}/businesscard-og-preview-v1.jpg`;
+    const imageUrl = `${publicUrl}/businesscard-og-preview.jpg`;
     const htmlLanguage = language === 'zh' ? 'zh-CN' : language;
     const direction = rtlLanguages.has(language) ? 'rtl' : 'ltr';
 
@@ -126,6 +126,7 @@ const handle = async (request, response) => {
         const body = await readFile(file);
         response.writeHead(200, {
             'Cache-Control': 'public, max-age=31536000, immutable',
+            'Content-Length': body.length,
             'Content-Type': contentTypes[path.extname(file).toLowerCase()] || 'application/octet-stream',
         });
         response.end(request.method === 'HEAD' ? undefined : body);
