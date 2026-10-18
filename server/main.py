@@ -8,12 +8,14 @@ from typing import Annotated, Any
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel, EmailStr
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from canban import CanbanIntegrationError, create_canban_quest
 from database import ContactAttachment, ContactSubmission, get_session, init_db
 from logging_config import setup_logging
+from preview import language_from_uri, load_previews, render_preview, resolve_language, target_url
 from storage import upload_bytes_to_s3
 
 
@@ -147,6 +149,25 @@ async def upload_attachments(files: list[UploadFile], request_id: str) -> list[d
 async def health() -> HealthResponse:
     logger.info("Health check requested")
     return HealthResponse(status="ok")
+
+
+@app.get("/og/preview", response_class=HTMLResponse)
+@app.get("/api/og/preview", response_class=HTMLResponse)
+async def og_preview(request: Request, lang: str | None = None, path: str | None = None) -> HTMLResponse:
+    previews = load_previews()
+    original_uri = request.headers.get("X-Original-URI")
+    language = resolve_language(
+        previews,
+        lang,
+        language_from_uri(original_uri),
+        request.cookies.get("businesscard_locale"),
+        request.headers.get("Accept-Language"),
+    )
+    page_url = target_url(path or original_uri, language)
+    response = HTMLResponse(render_preview(language, previews[language], page_url))
+    response.headers["Cache-Control"] = "public, max-age=300"
+    response.headers["Vary"] = "Accept-Language, Cookie, X-Original-URI"
+    return response
 
 
 @app.post("/api/contact", response_model=ContactResponse)

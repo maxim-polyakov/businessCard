@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Badge, Button, Col, Container, Row } from 'react-bootstrap';
+import LanguageSelector from '../components/LanguageSelector';
+import { useLocale } from '../i18n/LocaleContext';
 import './Visiteka.css';
 
 const Visiteka = observer(() => {
+    const { t } = useLocale();
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:3016/api';
     const formatApiError = (detail) => {
         if (!detail) {
-            return 'Не удалось отправить заявку';
+            return t('submitError');
         }
 
         if (typeof detail === 'string') {
@@ -37,69 +40,69 @@ const Visiteka = observer(() => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const profileData = {
-        name: 'Поляков Максим',
-        position: 'Full Stack Developer',
-        description: 'Проектирую и разрабатываю веб-приложения, AI-сервисы, e-commerce и backend-системы. Беру задачу от идеи и прототипа до запуска, интеграций и поддержки.',
+        name: t('profileName'),
+        position: t('profilePosition'),
+        description: t('profileDescription'),
         email: 'maxim7012@gmail.com',
         phone: '+7 (952) 441-26-71',
-        location: 'Нижний Новгород, Россия',
+        location: t('profileLocation'),
         stats: [
-            { value: '5+', label: 'запущенных проектов' },
-            { value: 'Fullstack', label: 'фронтенд + backend' },
-            { value: '24/7', label: 'сайт доступен онлайн' },
+            { value: '5+', label: t('statProjects') },
+            { value: 'Fullstack', label: t('statFullstack') },
+            { value: '24/7', label: t('statOnline') },
         ],
         services: [
             {
                 number: '01',
-                title: 'Веб-разработка и интеграции',
+                title: t('serviceWebTitle'),
                 tags: ['React', 'Node.js', 'Django', 'REST API'],
-                description: 'Создаю сайты, личные кабинеты и сервисы с понятной архитектурой, адаптивным интерфейсом и подключением внешних API.',
+                description: t('serviceWebDescription'),
             },
             {
                 number: '02',
-                title: 'Backend и бизнес-логика',
+                title: t('serviceBackendTitle'),
                 tags: ['Java', 'Spring Boot', 'Python', 'PostgreSQL'],
-                description: 'Разрабатываю серверную часть, авторизацию, базы данных, административные панели и надежные сценарии обработки данных.',
+                description: t('serviceBackendDescription'),
             },
             {
                 number: '03',
-                title: 'AI-продукты и автоматизация',
+                title: t('serviceAiTitle'),
                 tags: ['OpenAI API', 'WebSocket', 'AI Chat', 'Automation'],
-                description: 'Интегрирую AI-инструменты в продукты: чат-боты, генерацию изображений, автоматизацию рутинных процессов и прототипы MVP.',
+                description: t('serviceAiDescription'),
             },
         ],
         projects: [
             {
                 title: 'Misa AI Chat',
-                description: 'AI-чат с поддержкой ChatGPT, DALL-E и WebSocket-обмена сообщениями.',
+                description: t('misaDescription'),
                 technologies: ['React', 'Django', 'Python', 'OpenAI API', 'PostgreSQL'],
                 url: 'https://misa.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/Misa_bot',
             },
             {
                 title: 'Misa AI Gallery',
-                description: 'Галерея изображений, сгенерированных через DALL-E, с удобной витриной работ.',
+                description: t('galleryDescription'),
                 technologies: ['React', 'Express', 'PostgreSQL', 'Bootstrap'],
                 url: 'https://misagallery.baxic.ru',
                 github: 'https://github.com/maxim-polyakov/misadrawing',
             },
             {
                 title: 'E-Commerce Platform',
-                description: 'Интернет-магазин с корзиной, авторизацией, REST API и backend на Spring Boot.',
+                description: t('ecommerceDescription'),
                 technologies: ['Java', 'Spring Boot', 'React', 'JWT', 'PostgreSQL'],
                 url: 'https://ecommerce.baxic.ru',
                 github: 'https://github.com/maxim-polyakov/e-commerce-java-two',
             },
             {
-                title: 'Канбан',
-                description: 'Клиент-серверное приложение с доской задач, квестами и уровнями.',
+                title: t('canbanTitle'),
+                description: t('canbanDescription'),
                 technologies: ['React', 'JavaScript', 'C#', 'Docker'],
                 url: 'https://canban.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/canban_desktop',
             },
             {
                 title: 'Lotus Game',
-                description: 'Игровой проект с клиентской и серверной частью.',
+                description: t('lotusDescription'),
                 technologies: ['Java', 'JavaScript', 'CSS'],
                 url: 'https://lotus.baxic.ru/',
                 github: 'https://github.com/maxim-polyakov/lotus_game',
@@ -156,19 +159,19 @@ const Visiteka = observer(() => {
             }
 
             if (!isJsonResponse || result.ok !== true) {
-                throw new Error('Backend API вернул некорректный ответ. Проверьте проксирование /api на сервер.');
+                throw new Error(t('invalidApiResponse'));
             }
 
             setFormData(initialFormState);
             event.target.reset();
             setFormStatus({
                 type: 'success',
-                message: 'Заявка отправлена. Я свяжусь с вами в ближайшее время.',
+                message: t('submitSuccess'),
             });
         } catch (error) {
             setFormStatus({
                 type: 'error',
-                message: error.message || 'Ошибка отправки. Попробуйте позже.',
+                message: error.message || t('submitError'),
             });
         } finally {
             setIsSubmitting(false);
@@ -179,35 +182,36 @@ const Visiteka = observer(() => {
         <main className="visiteka-page">
             <Container className="visiteka-container">
                 <header className="topbar">
-                    <a className="brand" href="#top" aria-label="На главную">
+                    <a className="brand" href="#top" aria-label={t('homeAria')}>
                         <span className="brand-mark">B</span>
                         <span> BAXIC.DEV</span>
                     </a>
-                    <nav className="topbar-nav" aria-label="Основная навигация">
-                        <a href="#services">Услуги</a>
-                        <a href="#projects">Проекты</a>
-                        <a href="#contacts">Контакты</a>
+                    <nav className="topbar-nav" aria-label={t('homeAria')}>
+                        <a href="#services">{t('navServices')}</a>
+                        <a href="#projects">{t('navProjects')}</a>
+                        <a href="#contacts">{t('navContacts')}</a>
                     </nav>
+                    <LanguageSelector />
                 </header>
 
                 <section className="hero-section" id="top">
                     <Row className="align-items-end g-4">
                         <Col lg={8}>
-                            <p className="eyebrow">[ Персональная разработка ]</p>
-                            <h1 className="hero-title">Реализую IT-решения для бизнеса и личных продуктов</h1>
+                            <p className="eyebrow">{t('heroEyebrow')}</p>
+                            <h1 className="hero-title">{t('heroTitle')}</h1>
                             <p className="hero-description">{profileData.description}</p>
                             <div className="hero-actions">
                                 <Button className="primary-action" href="#contacts">
-                                    Обсудить проект
+                                    {t('discussProject')}
                                 </Button>
                                 <Button className="ghost-action" href="#projects">
-                                    Смотреть работы
+                                    {t('viewWork')}
                                 </Button>
                             </div>
                         </Col>
                         <Col lg={4}>
                             <aside className="profile-panel">
-                                <span className="panel-label">Разработчик</span>
+                                <span className="panel-label">{t('developerLabel')}</span>
                                 <h2>{profileData.name}</h2>
                                 <p>{profileData.position}</p>
                                 <div className="profile-line">
@@ -219,7 +223,7 @@ const Visiteka = observer(() => {
                     </Row>
                 </section>
 
-                <section className="stats-grid" aria-label="Краткая статистика">
+                <section className="stats-grid" aria-label={t('servicesTitle')}>
                     {profileData.stats.map((stat) => (
                         <div className="stat-card" key={stat.label}>
                             <strong>{stat.value}</strong>
@@ -230,8 +234,8 @@ const Visiteka = observer(() => {
 
                 <section className="content-section" id="services">
                     <div className="section-heading">
-                        <p className="eyebrow">[ Услуги ]</p>
-                        <h2>Что могу закрыть</h2>
+                        <p className="eyebrow">{t('servicesEyebrow')}</p>
+                        <h2>{t('servicesTitle')}</h2>
                     </div>
                     <div className="service-list">
                         {profileData.services.map((service) => (
@@ -255,8 +259,8 @@ const Visiteka = observer(() => {
 
                 <section className="content-section" id="projects">
                     <div className="section-heading">
-                        <p className="eyebrow">[ Портфолио ]</p>
-                        <h2>Проекты</h2>
+                        <p className="eyebrow">{t('portfolioEyebrow')}</p>
+                        <h2>{t('portfolioTitle')}</h2>
                     </div>
                     <Row className="g-4">
                         {profileData.projects.map((project, index) => (
@@ -274,7 +278,7 @@ const Visiteka = observer(() => {
                                     </div>
                                     <div className="project-links">
                                         <a href={project.url} target="_blank" rel="noopener noreferrer">
-                                            Проект <i className="fas fa-arrow-up-right-from-square"></i>
+                                            {t('projectLink')} <i className="fas fa-arrow-up-right-from-square"></i>
                                         </a>
                                         <a href={project.github} target="_blank" rel="noopener noreferrer">
                                             GitHub <i className="fab fa-github"></i>
@@ -288,12 +292,9 @@ const Visiteka = observer(() => {
 
                 <section className="contact-section" id="contacts">
                     <div className="contact-copy">
-                        <p className="eyebrow">[ Обсудить, посоветоваться, спросить ]</p>
-                        <h2>Связаться со мной</h2>
-                        <p>
-                            Опишите задачу в пару предложений. Если уже есть ТЗ, макеты или брифы,
-                            приложите файлы к заявке.
-                        </p>
+                        <p className="eyebrow">{t('contactEyebrow')}</p>
+                        <h2>{t('contactTitle')}</h2>
+                        <p>{t('contactDescription')}</p>
                         <div className="contact-grid">
                             <a href={`mailto:${profileData.email}`}>
                                 <span>01</span>
@@ -316,11 +317,11 @@ const Visiteka = observer(() => {
                     <form className="contact-form" onSubmit={handleSubmit}>
                         <div className="form-row">
                             <label>
-                                <span>01 Меня зовут</span>
+                                <span>01 {t('formNameLabel')}</span>
                                 <input
                                     name="name"
                                     type="text"
-                                    placeholder="Ваше имя"
+                                    placeholder={t('formNamePlaceholder')}
                                     minLength="2"
                                     maxLength="120"
                                     required
@@ -328,11 +329,11 @@ const Visiteka = observer(() => {
                                 />
                             </label>
                             <label>
-                                <span>02 Я работаю в компании</span>
+                                <span>02 {t('formCompanyLabel')}</span>
                                 <input
                                     name="company"
                                     type="text"
-                                    placeholder="Название компании"
+                                    placeholder={t('formCompanyPlaceholder')}
                                     maxLength="160"
                                     onChange={handleInputChange}
                                 />
@@ -340,31 +341,31 @@ const Visiteka = observer(() => {
                         </div>
                         <div className="form-row">
                             <label>
-                                <span>03 Связаться со мной по e-mail</span>
+                                <span>03 {t('formEmailLabel')}</span>
                                 <input
                                     name="email"
                                     type="email"
-                                    placeholder="Ваш e-mail"
+                                    placeholder={t('formEmailPlaceholder')}
                                     required
                                     onChange={handleInputChange}
                                 />
                             </label>
                             <label>
-                                <span>04 Позвонить мне</span>
+                                <span>04 {t('formPhoneLabel')}</span>
                                 <input
                                     name="phone"
                                     type="tel"
-                                    placeholder="Ваш номер телефона"
+                                    placeholder={t('formPhonePlaceholder')}
                                     maxLength="40"
                                     onChange={handleInputChange}
                                 />
                             </label>
                         </div>
                         <label>
-                            <span>05 Сообщение</span>
+                            <span>05 {t('formMessageLabel')}</span>
                             <textarea
                                 name="message"
-                                placeholder="Опишите задачу"
+                                placeholder={t('formMessagePlaceholder')}
                                 minLength="5"
                                 maxLength="4000"
                                 rows="4"
@@ -383,8 +384,8 @@ const Visiteka = observer(() => {
                             <span>
                                 <i className="fas fa-paperclip"></i>
                                 {formData.attachments.length > 0
-                                    ? `Выбрано файлов: ${formData.attachments.length}`
-                                    : 'Прикрепить ТЗ или файлы'}
+                                    ? t('selectedFiles').replace('{count}', String(formData.attachments.length))
+                                    : t('attachFiles')}
                             </span>
                             {formData.attachments.length > 0 && (
                                 <ul className="file-list">
@@ -393,7 +394,7 @@ const Visiteka = observer(() => {
                                     ))}
                                 </ul>
                             )}
-                            <small>jpg, jpeg, png, bmp, gif, pdf, doc, docx, txt</small>
+                            <small>{t('fileTypes')}</small>
                         </label>
                         <label className="checkbox-field">
                             <input
@@ -403,10 +404,10 @@ const Visiteka = observer(() => {
                                 checked={formData.consent}
                                 onChange={handleInputChange}
                             />
-                            <span>Я согласен на обработку персональных данных для ответа на заявку</span>
+                            <span>{t('consent')}</span>
                         </label>
                         <Button className="primary-action form-submit" type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? 'Отправляю...' : 'Отправить'}
+                            {isSubmitting ? t('sending') : t('send')}
                         </Button>
                         {formStatus.message && (
                             <p className={`form-status ${formStatus.type}`}>{formStatus.message}</p>

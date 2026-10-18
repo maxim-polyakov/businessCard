@@ -37,6 +37,7 @@ yarn-error.log*
 # python backend
 /server/.venv
 /server/__pycache__
+/server/**/__pycache__/
 /server/.pytest_cache
 /server/.env
 /server/logs

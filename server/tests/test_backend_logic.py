@@ -2,6 +2,7 @@ import unittest
 from unittest.mock import patch
 
 import canban
+import preview
 import storage
 
 
@@ -54,6 +55,34 @@ class StorageLogicTests(unittest.TestCase):
                 storage.build_public_url("contact/file.pdf"),
                 "https://uploads.s3.eu-test-1.amazonaws.com/contact/file.pdf",
             )
+
+
+class PreviewLogicTests(unittest.TestCase):
+    def test_language_resolution_prefers_explicit_candidates(self) -> None:
+        previews = {"en": {}, "ru": {}, "de": {}, "zh-TW": {}}
+        self.assertEqual(preview.resolve_language(previews, "de-DE", "ru"), "de")
+        self.assertEqual(preview.resolve_language(previews, None, "zh-Hant"), "zh-TW")
+        self.assertEqual(preview.resolve_language(previews, "unsupported"), "en")
+
+    def test_target_url_is_local_and_keeps_language(self) -> None:
+        self.assertEqual(
+            preview.target_url("/?project=1", "ru"),
+            "https://baxic.ru/?project=1&lang=ru",
+        )
+        self.assertEqual(
+            preview.target_url("https://evil.example", "en"),
+            "https://baxic.ru/?lang=en",
+        )
+
+    def test_preview_html_escapes_translated_content(self) -> None:
+        html = preview.render_preview(
+            "ar",
+            {"title": 'Baxic "Dev"', "description": "<portfolio>"},
+            "https://baxic.ru/?lang=ar",
+        )
+        self.assertIn('dir="rtl"', html)
+        self.assertIn("Baxic &quot;Dev&quot;", html)
+        self.assertIn("&lt;portfolio&gt;", html)
 
 
 if __name__ == "__main__":

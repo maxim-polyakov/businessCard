@@ -1,0 +1,49 @@
+.business-language-selector {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 9px 13px;
+    color: #f5f7ef;
+    border: 1px solid rgba(245, 247, 239, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.055);
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.business-language-selector:focus-within,
+.business-language-selector:hover {
+    color: #c8ff4d;
+    border-color: rgba(200, 255, 77, 0.45);
+}
+
+.business-language-selector select {
+    width: auto;
+    min-width: 7.5rem;
+    max-width: 10rem;
+    padding: 0;
+    color: inherit;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+
+.business-language-selector option {
+    color: #0b0f0c;
+    background: #f5f7ef;
+}
+
+@media (max-width: 768px) {
+    .business-language-selector {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .business-language-selector select {
+        flex: 1;
+        max-width: none;
+    }
+}

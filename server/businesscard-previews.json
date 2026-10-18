@@ -1,0 +1,308 @@
+{
+  "previews": {
+    "en": {
+      "title": "Maxim Polyakov — Full Stack Developer | Portfolio",
+      "description": "Maxim Polyakov is a Full Stack Developer specializing in React, Node.js, Java and Python. Web applications, AI, e-commerce, portfolio and contacts."
+    },
+    "ru": {
+      "title": "Поляков Максим — Fullstack-разработчик | Портфолио",
+      "description": "Поляков Максим — Fullstack-разработчик. React, Node.js, Java и Python. Веб-приложения, AI, e-commerce, портфолио и контакты."
+    },
+    "de": {
+      "title": "Maxim Polyakov – Full-Stack-Entwickler | Portfolio",
+      "description": "Maxim Polyakov ist ein Full-Stack-Entwickler, spezialisiert auf React, Node.js, Java und Python. Webanwendungen, KI, E-Commerce, Portfolio und Kontakte."
+    },
+    "ar": {
+      "title": "مكسيم بولياكوف — مطور Full Stack | المحفظة",
+      "description": "مكسيم بولياكوف هو مطور Full Stack متخصص في React وNode.js وJava وPython. تطبيقات الويب والذكاء الاصطناعي والتجارة الإلكترونية والمحفظة وجهات الاتصال."
+    },
+    "sq": {
+      "title": "Maxim Polyakov — Zhvilluesi i Full Stack | Portofoli",
+      "description": "Maxim Polyakov është një Zhvillues Full Stack i specializuar në React, Node.js, Java dhe Python. Aplikacionet në ueb, AI, tregtia elektronike, portofoli dhe kontaktet."
+    },
+    "am": {
+      "title": "Maxim Polyakov - ሙሉ ቁልል ገንቢ | ፖርትፎሊዮ",
+      "description": "Maxim Polyakov በReact፣ Node.js፣ Java እና Python ላይ የተካነ ሙሉ ቁልል ገንቢ ነው። የድር መተግበሪያዎች፣ AI፣ ኢ-ኮሜርስ፣ ፖርትፎሊዮ እና እውቂያዎች።"
+    },
+    "hy": {
+      "title": "Մաքսիմ Պոլյակով — Full Stack Developer | Պորտֆոլիո",
+      "description": "Մաքսիմ Պոլյակովը Full Stack ծրագրավորող է, որը մասնագիտացած է React, Node.js, Java և Python ոլորտներում: Վեբ հավելվածներ, AI, էլեկտրոնային առևտուր, պորտֆոլիո և կոնտակտներ:"
+    },
+    "az": {
+      "title": "Maksim Polyakov — Full Stack Developer | Portfolio",
+      "description": "Maksim Polyakov React, Node.js, Java və Python dillərində ixtisaslaşmış Full Stack Developeridir. Veb tətbiqləri, AI, e-ticarət, portfel və kontaktlar."
+    },
+    "eu": {
+      "title": "Maxim Polyakov — Full Stack garatzailea | Portfolioa",
+      "description": "Maxim Polyakov React, Node.js, Java eta Python-en espezializatutako Full Stack garatzailea da. Web aplikazioak, AI, merkataritza elektronikoa, zorroa eta kontaktuak."
+    },
+    "be": {
+      "title": "Максім Палякоў — Full Stack Developer | Партфоліо",
+      "description": "Максім Палякоў — Full Stack Developer, які спецыялізуецца на React, Node.js, Java і Python. Вэб-праграмы, штучны інтэлект, электронная камерцыя, партфоліо і кантакты."
+    },
+    "bn": {
+      "title": "ম্যাক্সিম পলিয়াকভ — ফুল স্ট্যাক ডেভেলপার | পোর্টফোলিও",
+      "description": "ম্যাক্সিম পলিয়াকভ একজন পূর্ণ স্ট্যাক ডেভেলপার যিনি React, Node.js, Java এবং Python-এ বিশেষজ্ঞ। ওয়েব অ্যাপ্লিকেশন, এআই, ই-কমার্স, পোর্টফোলিও এবং পরিচিতি।"
+    },
+    "bg": {
+      "title": "Максим Поляков — Разработчик на пълен стек | Портфолио",
+      "description": "Максим Поляков е Full Stack разработчик, специализиран в React, Node.js, Java и Python. Уеб приложения, AI, електронна търговия, портфолио и контакти."
+    },
+    "my": {
+      "title": "Maxim Polyakov — Full Stack Developer | အစုစု",
+      "description": "Maxim Polyakov သည် React၊ Node.js၊ Java နှင့် Python တို့ကို အထူးပြုသည့် Full Stack Developer ဖြစ်သည်။ ဝဘ်အက်ပလီကေးရှင်းများ၊ AI၊ e-commerce၊ အစုစုနှင့် အဆက်အသွယ်များ။"
+    },
+    "ca": {
+      "title": "Maxim Polyakov — Desenvolupador Full Stack | Cartera",
+      "description": "Maxim Polyakov és un desenvolupador Full Stack especialitzat en React, Node.js, Java i Python. Aplicacions web, IA, comerç electrònic, cartera i contactes."
+    },
+    "zh": {
+      "title": "Maxim Polyakov — 全栈开发人员 |投资组合",
+      "description": "Maxim Polyakov 是一名全栈开发人员，专注于 React、Node.js、Java 和 Python。 Web 应用程序、人工智能、电子商务、投资组合和联系人。"
+    },
+    "zh-TW": {
+      "title": "Maxim Polyakov — 全端開發人員 |投資組合",
+      "description": "Maxim Polyakov 是一位全端開發人員，專注於 React、Node.js、Java 和 Python。 Web 應用程式、人工智慧、電子商務、作品集和聯絡人。"
+    },
+    "hr": {
+      "title": "Maxim Polyakov — Full Stack Developer | Portfelj",
+      "description": "Maxim Polyakov je Full Stack Developer specijaliziran za React, Node.js, Javu i Python. Web aplikacije, AI, e-trgovina, portfelj i kontakti."
+    },
+    "cs": {
+      "title": "Maxim Polyakov — Full Stack Developer | Portfolio",
+      "description": "Maxim Polyakov je Full Stack Developer se specializací na React, Node.js, Java a Python. Webové aplikace, AI, e-commerce, portfolio a kontakty."
+    },
+    "da": {
+      "title": "Maxim Polyakov — Full Stack-udvikler | Portefølje",
+      "description": "Maxim Polyakov er en Full Stack-udvikler med speciale i React, Node.js, Java og Python. Webapplikationer, AI, e-handel, portefølje og kontakter."
+    },
+    "nl": {
+      "title": "Maxim Polyakov — Full-stack-ontwikkelaar | Portefeuille",
+      "description": "Maxim Polyakov is een Full Stack Developer gespecialiseerd in React, Node.js, Java en Python. Webapplicaties, AI, e-commerce, portfolio en contacten."
+    },
+    "et": {
+      "title": "Maxim Poljakov — Full Stacki arendaja | Portfell",
+      "description": "Maxim Polyakov on Full Stacki arendaja, kes on spetsialiseerunud Reactile, Node.js-ile, Javale ja Pythonile. Veebirakendused, AI, e-kaubandus, portfell ja kontaktid."
+    },
+    "fi": {
+      "title": "Maxim Polyakov — Full Stack -kehittäjä | Portfolio",
+      "description": "Maxim Polyakov on Full Stack -kehittäjä, joka on erikoistunut Reactiin, Node.js:ään, Javaan ja Pythoniin. Verkkosovellukset, tekoäly, sähköinen kaupankäynti, portfolio ja yhteystiedot."
+    },
+    "fr": {
+      "title": "Maxim Polyakov — Développeur Full Stack | Portefeuille",
+      "description": "Maxim Polyakov est un développeur Full Stack spécialisé dans React, Node.js, Java et Python. Applications Web, IA, e-commerce, portfolio et contacts."
+    },
+    "gl": {
+      "title": "Maxim Polyakov — Desenvolvedor Full Stack | Carteira",
+      "description": "Maxim Polyakov é un programador Full Stack especializado en React, Node.js, Java e Python. Aplicacións web, IA, comercio electrónico, carteira e contactos."
+    },
+    "ka": {
+      "title": "მაქსიმ პოლიაკოვი — Full Stack Developer | პორტფოლიო",
+      "description": "მაქსიმ პოლიაკოვი არის Full Stack დეველოპერი, რომელიც სპეციალიზირებულია React, Node.js, Java და Python-ში. ვებ აპლიკაციები, AI, ელექტრონული კომერცია, პორტფოლიო და კონტაქტები."
+    },
+    "el": {
+      "title": "Maxim Polyakov — Προγραμματιστής Full Stack | Χαρτοφυλάκιο",
+      "description": "Ο Maxim Polyakov είναι προγραμματιστής Full Stack που ειδικεύεται σε React, Node.js, Java και Python. Εφαρμογές Ιστού, AI, ηλεκτρονικό εμπόριο, χαρτοφυλάκιο και επαφές."
+    },
+    "he": {
+      "title": "מקסים פוליאקוב — מפתח Full Stack | תיק השקעות",
+      "description": "מקסים פוליאקוב הוא מפתח Full Stack המתמחה ב-React, Node.js, Java ו-Python. יישומי אינטרנט, בינה מלאכותית, מסחר אלקטרוני, תיק עבודות ואנשי קשר."
+    },
+    "hi": {
+      "title": "मैक्सिम पॉलाकोव - पूर्ण स्टैक डेवलपर | पोर्टफोलियो",
+      "description": "मैक्सिम पॉलाकोव एक पूर्ण स्टैक डेवलपर है जो रिएक्ट, नोड.जेएस, जावा और पायथन में विशेषज्ञता रखता है। वेब एप्लिकेशन, एआई, ई-कॉमर्स, पोर्टफोलियो और संपर्क।"
+    },
+    "hu": {
+      "title": "Maxim Polyakov — Full Stack fejlesztő | Portfólió",
+      "description": "Maxim Polyakov egy Full Stack fejlesztő, aki a React, Node.js, Java és Python területekre szakosodott. Webes alkalmazások, mesterséges intelligencia, e-kereskedelem, portfólió és névjegyek."
+    },
+    "is": {
+      "title": "Maxim Polyakov — Full Stack Developer | Eignasafn",
+      "description": "Maxim Polyakov er full Stack Developer sem sérhæfir sig í React, Node.js, Java og Python. Vefforrit, gervigreind, rafræn viðskipti, eignasafn og tengiliðir."
+    },
+    "id": {
+      "title": "Maxim Polyakov — Pengembang Tumpukan Penuh | Portofolio",
+      "description": "Maxim Polyakov adalah Pengembang Full Stack yang berspesialisasi dalam React, Node.js, Java dan Python. Aplikasi web, AI, e-commerce, portofolio, dan kontak."
+    },
+    "ga": {
+      "title": "Maxim Polyakov - Forbróir Stack Iomlán | Punann",
+      "description": "Is Forbróir Stack Iomlán é Maxim Polyakov a dhéanann sainfheidhmiú ar React, Node.js, Java agus Python. Feidhmchláir Ghréasáin, AI, ríomhthráchtáil, punann agus teagmhálacha."
+    },
+    "it": {
+      "title": "Maxim Polyakov — Sviluppatore full stack | Portafoglio",
+      "description": "Maxim Polyakov è uno sviluppatore full stack specializzato in React, Node.js, Java e Python. Applicazioni web, AI, e-commerce, portfolio e contatti."
+    },
+    "ja": {
+      "title": "Maxim Polyakov — フルスタック開発者 |ポートフォリオ",
+      "description": "Maxim Polyakov は、React、Node.js、Java、Python を専門とするフルスタック開発者です。 Web アプリケーション、AI、電子商取引、ポートフォリオ、連絡先。"
+    },
+    "kn": {
+      "title": "ಮ್ಯಾಕ್ಸಿಮ್ ಪಾಲಿಯಾಕೋವ್ — ಪೂರ್ಣ ಸ್ಟಾಕ್ ಡೆವಲಪರ್ | ಬಂಡವಾಳ",
+      "description": "Maxim Polyakov React, Node.js, Java ಮತ್ತು Python ನಲ್ಲಿ ಪರಿಣತಿ ಹೊಂದಿರುವ ಪೂರ್ಣ ಸ್ಟಾಕ್ ಡೆವಲಪರ್ ಆಗಿದ್ದಾರೆ. ವೆಬ್ ಅಪ್ಲಿಕೇಶನ್‌ಗಳು, AI, ಇ-ಕಾಮರ್ಸ್, ಪೋರ್ಟ್‌ಫೋಲಿಯೊ ಮತ್ತು ಸಂಪರ್ಕಗಳು."
+    },
+    "kk": {
+      "title": "Максим Поляков — Толық стек әзірлеушісі | Портфолио",
+      "description": "Максим Поляков – React, Node.js, Java және Python тілдерінде маманданған Full Stack әзірлеушісі. Веб-қосымшалар, AI, электрондық коммерция, портфолио және контактілер."
+    },
+    "km": {
+      "title": "Maxim Polyakov — អ្នក​អភិវឌ្ឍន៍​បណ្តុំ​ពេញ | ផលប័ត្រ",
+      "description": "Maxim Polyakov គឺជា​អ្នក​បង្កើត Full Stack ដែលមាន​ឯកទេស​ខាង React, Node.js, Java និង Python។ កម្មវិធីគេហទំព័រ AI ពាណិជ្ជកម្មអេឡិចត្រូនិក ផលប័ត្រ និងទំនាក់ទំនង។"
+    },
+    "ko": {
+      "title": "Maxim Polyakov — 풀 스택 개발자 | 포트폴리오",
+      "description": "Maxim Polyakov는 React, Node.js, Java 및 Python을 전문으로 하는 풀 스택 개발자입니다. 웹 애플리케이션, AI, 전자상거래, 포트폴리오 및 연락처."
+    },
+    "lo": {
+      "title": "Maxim Polyakov — ຜູ້​ພັດ​ທະ​ນາ Stack ເຕັມ | ຫຼັກຊັບ",
+      "description": "Maxim Polyakov ເປັນຜູ້ພັດທະນາ Full Stack ທີ່ຊ່ຽວຊານໃນ React, Node.js, Java ແລະ Python. ແອັບພລິເຄຊັນເວັບ, AI, e-commerce, portfolio ແລະການຕິດຕໍ່."
+    },
+    "lv": {
+      "title": "Maksims Poļakovs — Full Stack izstrādātājs | Portfelis",
+      "description": "Maksims Poļakovs ir Full Stack izstrādātājs, kas specializējas React, Node.js, Java un Python. Tīmekļa lietojumprogrammas, AI, e-komercija, portfolio un kontakti."
+    },
+    "lt": {
+      "title": "Maksimas Polyakovas — „Full Stack“ kūrėjas | Portfelis",
+      "description": "Maksimas Polyakovas yra „Full Stack“ kūrėjas, kurio specializacija yra „React“, „Node.js“, „Java“ ir „Python“. Žiniatinklio programos, AI, elektroninė prekyba, portfelis ir kontaktai."
+    },
+    "mk": {
+      "title": "Maxim Polyakov — Full Stack Developer | Портфолио",
+      "description": "Максим Полјаков е развивач на Full Stack специјализиран за React, Node.js, Java и Python. Веб апликации, вештачка интелигенција, е-трговија, портфолио и контакти."
+    },
+    "ms": {
+      "title": "Maxim Polyakov — Pembangun Tindanan Penuh | Portfolio",
+      "description": "Maxim Polyakov ialah Pembangun Tindanan Penuh yang mengkhusus dalam React, Node.js, Java dan Python. Aplikasi web, AI, e-dagang, portfolio dan kenalan."
+    },
+    "ml": {
+      "title": "മാക്സിം പോളിയാക്കോവ് — ഫുൾ സ്റ്റാക്ക് ഡെവലപ്പർ | പോർട്ട്ഫോളിയോ",
+      "description": "Maxim Polyakov React, Node.js, Java, Python എന്നിവയിൽ വൈദഗ്ദ്ധ്യമുള്ള ഒരു ഫുൾ സ്റ്റാക്ക് ഡെവലപ്പറാണ്. വെബ് ആപ്ലിക്കേഷനുകൾ, AI, ഇ-കൊമേഴ്സ്, പോർട്ട്ഫോളിയോ, കോൺടാക്റ്റുകൾ."
+    },
+    "mt": {
+      "title": "Maxim Polyakov — Żviluppatur tal-munzell sħiħ | Portafoll",
+      "description": "Maxim Polyakov huwa Full Stack Developer li jispeċjalizza f'React, Node.js, Java u Python. Applikazzjonijiet tal-web, AI, kummerċ elettroniku, portafoll u kuntatti."
+    },
+    "mr": {
+      "title": "मॅक्सिम पॉलीकोव्ह — फुल स्टॅक डेव्हलपर | पोर्टफोलिओ",
+      "description": "Maxim Polyakov हा React, Node.js, Java आणि Python मध्ये खास असलेला फुल स्टॅक डेव्हलपर आहे. वेब अनुप्रयोग, एआय, ई-कॉमर्स, पोर्टफोलिओ आणि संपर्क."
+    },
+    "mn": {
+      "title": "Максим Поляков — Бүрэн стек хөгжүүлэгч | Портфолио",
+      "description": "Максим Поляков бол React, Node.js, Java болон Python хэл дээр мэргэшсэн Full Stack хөгжүүлэгч юм. Вэб програмууд, хиймэл оюун ухаан, цахим худалдаа, багц болон харилцагчид."
+    },
+    "ne": {
+      "title": "म्याक्सिम पोल्याकोभ - पूर्ण स्ट्याक विकासकर्ता | पोर्टफोलियो",
+      "description": "Maxim Polyakov React, Node.js, Java र Python मा विशेषज्ञता हासिल गर्ने पूर्ण स्ट्याक विकासकर्ता हो। वेब अनुप्रयोगहरू, एआई, ई-वाणिज्य, पोर्टफोलियो र सम्पर्कहरू।"
+    },
+    "nb": {
+      "title": "Maxim Polyakov — Full Stack-utvikler | Portefølje",
+      "description": "Maxim Polyakov er en Full Stack-utvikler som spesialiserer seg på React, Node.js, Java og Python. Webapplikasjoner, AI, e-handel, portefølje og kontakter."
+    },
+    "fa": {
+      "title": "Maxim Polyakov — Full Stack Developer | نمونه کارها",
+      "description": "Maxim Polyakov یک توسعه دهنده Full Stack متخصص در React، Node.js، جاوا و پایتون است. برنامه های کاربردی وب، هوش مصنوعی، تجارت الکترونیک، نمونه کارها و مخاطبین."
+    },
+    "pl": {
+      "title": "Maxim Polyakov — programista Full Stack | Portfel",
+      "description": "Maxim Polyakov jest programistą Full Stack specjalizującym się w React, Node.js, Java i Python. Aplikacje internetowe, AI, e-commerce, portfolio i kontakty."
+    },
+    "pt": {
+      "title": "Maxim Polyakov — Desenvolvedor Full Stack | Portfólio",
+      "description": "Maxim Polyakov é desenvolvedor Full Stack especializado em React, Node.js, Java e Python. Aplicações web, IA, e-commerce, portfólio e contatos."
+    },
+    "pa": {
+      "title": "ਮੈਕਸਿਮ ਪੋਲੀਕੋਵ — ਫੁੱਲ ਸਟੈਕ ਡਿਵੈਲਪਰ | ਪੋਰਟਫੋਲੀਓ",
+      "description": "ਮੈਕਸਿਮ ਪੋਲਿਆਕੋਵ ਇੱਕ ਪੂਰਾ ਸਟੈਕ ਡਿਵੈਲਪਰ ਹੈ ਜੋ React, Node.js, Java ਅਤੇ Python ਵਿੱਚ ਮਾਹਰ ਹੈ। ਵੈੱਬ ਐਪਲੀਕੇਸ਼ਨ, ਏਆਈ, ਈ-ਕਾਮਰਸ, ਪੋਰਟਫੋਲੀਓ ਅਤੇ ਸੰਪਰਕ।"
+    },
+    "ro": {
+      "title": "Maxim Polyakov — Dezvoltator Full Stack | Portofoliu",
+      "description": "Maxim Polyakov este un dezvoltator Full Stack specializat în React, Node.js, Java și Python. Aplicații web, AI, comerț electronic, portofoliu și contacte."
+    },
+    "sr": {
+      "title": "Маким Полиаков — Фулл Стацк Девелопер | Портфолио",
+      "description": "Маким Полиаков је Фулл Стацк програмер специјализован за Реацт, Ноде.јс, Јава и Питхон. Веб апликације, АИ, е-трговина, портфолио и контакти."
+    },
+    "si": {
+      "title": "Maxim Polyakov — Full Stack Developer | කළඹ",
+      "description": "Maxim Polyakov යනු React, Node.js, Java සහ Python පිළිබඳ විශේෂීකරණය වූ Full Stack Developer වේ. වෙබ් යෙදුම්, AI, e-commerce, portfolio සහ contacts."
+    },
+    "sk": {
+      "title": "Maxim Polyakov — Full Stack Developer | Portfólio",
+      "description": "Maxim Polyakov je Full Stack Developer špecializujúci sa na React, Node.js, Java a Python. Webové aplikácie, AI, elektronický obchod, portfólio a kontakty."
+    },
+    "sl": {
+      "title": "Maxim Polyakov — Full Stack razvijalec | Portfelj",
+      "description": "Maxim Polyakov je Full Stack razvijalec, specializiran za React, Node.js, Javo in Python. Spletne aplikacije, AI, e-trgovina, portfelj in kontakti."
+    },
+    "es": {
+      "title": "Maxim Polyakov — Desarrollador completo | Portafolio",
+      "description": "Maxim Polyakov es un desarrollador Full Stack especializado en React, Node.js, Java y Python. Aplicaciones web, IA, comercio electrónico, cartera y contactos."
+    },
+    "sw": {
+      "title": "Maxim Polyakov - Msanidi Kamili wa Rafu | Kwingineko",
+      "description": "Maxim Polyakov ni Msanidi Programu Kamili aliyebobea katika React, Node.js, Java na Python. Programu za wavuti, AI, e-commerce, kwingineko na anwani."
+    },
+    "tl": {
+      "title": "Maxim Polyakov — Full Stack Developer | Portfolio",
+      "description": "Si Maxim Polyakov ay isang Full Stack Developer na dalubhasa sa React, Node.js, Java at Python. Mga web application, AI, e-commerce, portfolio at mga contact."
+    },
+    "tg": {
+      "title": "Максим Поляков — Таҳиягари Full Stack | Портфолио",
+      "description": "Максим Поляков як Developer Full Stack аст, ки ба React, Node.js, Java ва Python тахассус дорад. Барномаҳои веб, AI, тиҷорати электронӣ, портфел ва алоқаҳо."
+    },
+    "th": {
+      "title": "Maxim Polyakov — นักพัฒนาเต็มสแตก | ผลงาน",
+      "description": "Maxim Polyakov เป็น Full Stack Developer ที่เชี่ยวชาญด้าน React, Node.js, Java และ Python เว็บแอปพลิเคชัน, AI, อีคอมเมิร์ซ, พอร์ตโฟลิโอ และผู้ติดต่อ"
+    },
+    "tr": {
+      "title": "Maxim Polyakov — Tam Yığın Geliştiricisi | Portföy",
+      "description": "Maxim Polyakov, React, Node.js, Java ve Python konusunda uzmanlaşmış bir Tam Yığın Geliştiricisidir. Web uygulamaları, yapay zeka, e-ticaret, portföy ve kişiler."
+    },
+    "uk": {
+      "title": "Максим Поляков — Full Stack Developer | Портфоліо",
+      "description": "Максим Поляков — Full Stack Developer, спеціалізується на React, Node.js, Java та Python. Веб-додатки, AI, електронна комерція, портфоліо та контакти."
+    },
+    "ur": {
+      "title": "میکسم پولیاکوف - مکمل اسٹیک ڈویلپر | پورٹ فولیو",
+      "description": "Maxim Polyakov ایک مکمل اسٹیک ڈویلپر ہے جو React، Node.js، Java اور Python میں مہارت رکھتا ہے۔ ویب ایپلیکیشنز، AI، ای کامرس، پورٹ فولیو اور رابطے۔"
+    },
+    "uz": {
+      "title": "Maksim Polyakov — Toʻliq stekni ishlab chiquvchi | Portfel",
+      "description": "Maksim Polyakov React, Node.js, Java va Python bo‘yicha ixtisoslashgan Full Stack dasturchisi. Veb-ilovalar, AI, elektron tijorat, portfel va kontaktlar."
+    },
+    "vi": {
+      "title": "Maxim Polykov — Nhà phát triển toàn diện | danh mục đầu tư",
+      "description": "Maxim Polykov là Nhà phát triển Full Stack chuyên về React, Node.js, Java và Python. Ứng dụng web, AI, thương mại điện tử, danh mục đầu tư và liên hệ."
+    },
+    "cy": {
+      "title": "Maxim Polyakov - Datblygwr Stack Llawn | Portffolio",
+      "description": "Mae Maxim Polyakov yn Ddatblygwr Stack Llawn sy'n arbenigo mewn React, Node.js, Java a Python. Cymwysiadau gwe, AI, e-fasnach, portffolio a chysylltiadau."
+    },
+    "xh": {
+      "title": "UMaxim Polyakov - uMphuhlisi weSitaki esipheleleyo | Ipotfoliyo",
+      "description": "UMaxim Polyakov nguMphuhlisi weSitaki esigcweleyo osebenza kwiReact, Node.js, Java kunye nePython. Usetyenziso lwewebhu, i-AI, i-e-commerce, ipotfoliyo kunye nabafowunelwa."
+    },
+    "yi": {
+      "title": "מאַקסים פּאָליאַקאָוו - גאַנץ סטאַק דעוועלאָפּער | פּאָרטפעל",
+      "description": "מאַקסים פּאָליאַקאָוו איז אַ גאַנץ סטאַק דעוועלאָפּער וואָס ספּעשאַלייזיז אין React, Node.js, Java און Python. וועב אַפּלאַקיישאַנז, אַי, E- האַנדל, פּאָרטפעל און קאָנטאַקטן."
+    },
+    "yo": {
+      "title": "Maxim Polyakov - Full Stack Olùgbéejáde | Portfolio",
+      "description": "Maxim Polyakov jẹ Olùgbéejáde Stack Kikun ti o ṣe amọja ni React, Node.js, Java ati Python. Awọn ohun elo wẹẹbu, AI, e-commerce, portfolio ati awọn olubasọrọ."
+    },
+    "zu": {
+      "title": "UMaxim Polyakov — Umthuthukisi Wesitaki Esigcwele | Iphothifoliyo",
+      "description": "UMaxim Polyakov unguMthuthukisi Wesitaki Esigcwele ogxile ku-React, Node.js, Java nePython. Izinhlelo zokusebenza zewebhu, i-AI, i-e-commerce, iphothifoliyo noxhumana nabo."
+    },
+    "gu": {
+      "title": "મેક્સિમ પોલિકોવ — સંપૂર્ણ સ્ટેક ડેવલપર | પોર્ટફોલિયો",
+      "description": "મેક્સિમ પોલિઆકોવ એક સંપૂર્ણ સ્ટેક ડેવલપર છે જે React, Node.js, Java અને Python માં વિશેષતા ધરાવે છે. વેબ એપ્લિકેશન, AI, ઈ-કોમર્સ, પોર્ટફોલિયો અને સંપર્કો."
+    },
+    "haw": {
+      "title": "Maxim Polyakov — Hoʻokumu Hoʻokumu piha | Palapala",
+      "description": "ʻO Maxim Polyakov kahi mea hoʻomohala piha piha i ka React, Node.js, Java a me Python. Nā noi pūnaewele, AI, e-commerce, portfolio a me nā pilina."
+    },
+    "ig": {
+      "title": "Maxim Polyakov - Onye Mmepụta zuru oke | Pọtụfoliyo",
+      "description": "Maxim Polyakov bụ onye nrụpụta ihe zuru oke ọkachamara na React, Node.js, Java na Python. Ngwa weebụ, AI, e-azụmahịa, Pọtụfoliyo na kọntaktị."
+    }
+  }
+}
