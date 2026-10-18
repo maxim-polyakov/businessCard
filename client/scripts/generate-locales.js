@@ -4,6 +4,7 @@ const https = require('https');
 const path = require('path');
 
 const OUTPUT = path.join(__dirname, '..', 'src', 'i18n', 'translations.js');
+const CLIENT_PREVIEW_OUTPUT = path.join(__dirname, '..', 'previewLanguagePack.json');
 const PREVIEW_OUTPUT = path.join(__dirname, '..', '..', 'server', 'businesscard-previews.json');
 const LANGUAGE_CODES = [
     'en', 'ru', 'de', 'ar', 'sq', 'am', 'hy', 'az', 'eu', 'be', 'bn', 'bg', 'my', 'ca',
@@ -198,13 +199,16 @@ const run = async () => {
         + `export const REQUIRED_TRANSLATION_KEYS = ${JSON.stringify(Object.keys(ENGLISH), null, 4)};\n`;
     fs.mkdirSync(path.dirname(OUTPUT), { recursive: true });
     fs.writeFileSync(OUTPUT, contents, 'utf8');
-    fs.writeFileSync(PREVIEW_OUTPUT, `${JSON.stringify({
+    const previewContents = `${JSON.stringify({
         previews: Object.fromEntries(Object.entries(orderedResult).map(([code, messages]) => [
             code,
             { title: messages.metaTitle, description: messages.metaDescription },
         ])),
-    }, null, 2)}\n`, 'utf8');
+    }, null, 2)}\n`;
+    fs.writeFileSync(CLIENT_PREVIEW_OUTPUT, previewContents, 'utf8');
+    fs.writeFileSync(PREVIEW_OUTPUT, previewContents, 'utf8');
     console.log(`Wrote ${OUTPUT}`);
+    console.log(`Wrote ${CLIENT_PREVIEW_OUTPUT}`);
     console.log(`Wrote ${PREVIEW_OUTPUT}`);
 };
 

@@ -1,4 +1,4 @@
 #!/bin/sh
-# Уведомление поисковиков об обновлении, затем запуск serve
+# Уведомление поисковиков об обновлении, затем запуск SPA-сервера с локализованными meta-тегами
 node scripts/notify-indexnow.js || true
-exec serve -s build -l 3000
+exec node server.cjs
