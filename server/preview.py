@@ -73,7 +73,7 @@ def render_preview(
     title = escape(preview["title"], quote=True)
     description = escape(preview["description"], quote=True)
     page = escape(page_url, quote=True)
-    image = "https://baxic.ru/favicon.png"
+    image = "https://baxic.ru/businesscard-og-preview-v1.jpg"
     direction = "rtl" if language in RTL_LANGUAGES else "ltr"
     html_language = "zh-CN" if language == "zh" else language
     return f"""<!doctype html>
@@ -87,12 +87,17 @@ def render_preview(
   <meta property="og:url" content="{page}">
   <meta property="og:image" content="{image}">
   <meta property="og:image:secure_url" content="{image}">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="576">
+  <meta property="og:image:alt" content="{title}">
   <meta name="description" content="{description}">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{title}">
   <meta name="twitter:description" content="{description}">
   <meta name="twitter:image" content="{image}">
   <link rel="canonical" href="{page}">
+  <link rel="image_src" href="{image}">
   <meta http-equiv="refresh" content="0;url={page}">
   <title>{title}</title>
 </head>

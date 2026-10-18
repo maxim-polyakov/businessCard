@@ -8,7 +8,6 @@ const LanguageSelector = () => {
     return (
         <label className="business-language-selector">
             <span className="visually-hidden">{t('language')}</span>
-            <span aria-hidden="true">🌐</span>
             <select
                 value={language}
                 onChange={(event) => setLanguage(event.target.value)}
