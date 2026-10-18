@@ -196,7 +196,7 @@ const Visiteka = observer(() => {
 
                 <section className="hero-section" id="top">
                     <Row className="align-items-end g-4">
-                        <Col lg={8}>
+                        <Col lg={12}>
                             <p className="eyebrow">{t('heroEyebrow')}</p>
                             <h1 className="hero-title">{t('heroTitle')}</h1>
                             <p className="hero-description">{profileData.description}</p>
@@ -209,7 +209,7 @@ const Visiteka = observer(() => {
                                 </Button>
                             </div>
                         </Col>
-                        <Col lg={4}>
+                        <Col lg={12}>
                             <aside className="profile-panel">
                                 <span className="panel-label">{t('developerLabel')}</span>
                                 <h2>{profileData.name}</h2>
