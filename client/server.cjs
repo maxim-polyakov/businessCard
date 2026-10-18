@@ -64,7 +64,7 @@ const renderIndex = (template, request, url) => {
     const language = requestLanguage(request, url);
     const preview = previews[language] || previews.en;
     const pageUrl = `${publicUrl}${url.pathname}${url.search}`;
-    const imageUrl = `${publicUrl}/businesscard-logo-preview.jpg`;
+    const imageUrl = `${publicUrl}/baxic-logo-card.jpg`;
     const htmlLanguage = language === 'zh' ? 'zh-CN' : language;
     const direction = rtlLanguages.has(language) ? 'rtl' : 'ltr';
 

@@ -73,7 +73,7 @@ def render_preview(
     title = escape(preview["title"], quote=True)
     description = escape(preview["description"], quote=True)
     page = escape(page_url, quote=True)
-    image = "https://baxic.ru/businesscard-logo-preview.jpg"
+    image = "https://baxic.ru/baxic-logo-card.jpg"
     direction = "rtl" if language in RTL_LANGUAGES else "ltr"
     html_language = "zh-CN" if language == "zh" else language
     return f"""<!doctype html>

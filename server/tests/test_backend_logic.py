@@ -85,7 +85,7 @@ class PreviewLogicTests(unittest.TestCase):
         self.assertIn("&lt;portfolio&gt;", html)
         self.assertIn('twitter:card" content="summary_large_image"', html)
         self.assertIn(
-            'og:image" content="https://baxic.ru/businesscard-logo-preview.jpg"',
+            'og:image" content="https://baxic.ru/baxic-logo-card.jpg"',
             html,
         )
         self.assertIn('og:image:width" content="1536"', html)
