@@ -39,6 +39,8 @@ CANBAN_CATEGORY = int(get_env("CANBAN_CATEGORY") or "0")
 CANBAN_XP_REWARD = int(get_env("CANBAN_XP_REWARD") or "0")
 CANBAN_INVITE_REQUESTER = (get_env("CANBAN_INVITE_REQUESTER") or "false").lower() == "true"
 CANBAN_AUTO_MEMBER_EMAIL = get_env("CANBAN_AUTO_MEMBER_EMAIL") or "maxim7012@gmail.com"
+# TeamRole.Admin in Canban: the auto member gets the same rights as the team creator.
+CANBAN_ADMIN_ROLE = 2
 
 
 def parse_uuid_list(raw_value: str | None) -> list[str]:
@@ -191,8 +193,13 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
     normalized_email = email.lower()
     members = await request_canban("GET", f"/Teams/{team_id}/members")
 
-    if any((member.get("email") or "").lower() == normalized_email for member in members or []):
-        logger.info("Canban team member already exists: team_id=%s email=%s", team_id, email)
+    existing = next((m for m in members or [] if (m.get("email") or "").lower() == normalized_email), None)
+    if existing:
+        if existing.get("role") != "Admin" and existing.get("userId"):
+            await request_canban("PUT", f"/Teams/{team_id}/members/{existing['userId']}/role", json={"role": CANBAN_ADMIN_ROLE})
+            logger.info("Canban team member promoted to admin: team_id=%s email=%s", team_id, email)
+        else:
+            logger.info("Canban team member already exists: team_id=%s email=%s", team_id, email)
         return
 
     users = await request_canban("GET", "/Users")
@@ -203,7 +210,7 @@ async def ensure_team_member_by_email(team_id: str, email: str) -> None:
 
     if user and user.get("id"):
         try:
-            await request_canban("POST", f"/Teams/{team_id}/members/{user['id']}")
+            await request_canban("POST", f"/Teams/{team_id}/members/{user['id']}?role={CANBAN_ADMIN_ROLE}")
             logger.info("Canban team member added: team_id=%s email=%s user_id=%s", team_id, email, user["id"])
         except CanbanIntegrationError as error:
             if "400" not in str(error) and "409" not in str(error):
